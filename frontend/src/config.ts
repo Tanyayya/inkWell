@@ -1,0 +1,1 @@
+export const BACKEND_URL="https://backend.tanyashukla006.workers.dev"

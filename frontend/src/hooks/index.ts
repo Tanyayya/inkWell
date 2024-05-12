@@ -15,7 +15,7 @@ export const useBlog =({id}:{id:string}) =>{
     const [blog, setBlog] = useState<Blog>();
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/api/vi/blog/${id}`, {
+        axios.get(`https://backend.tanyashukla006.workers.dev/api/vi/blog/${id}`, {
             headers: {
                 Authorization: localStorage.getItem("token")
             }
@@ -45,7 +45,7 @@ export const useBlogs =() =>{
     const[loading,setLoading]=useState(true);
 
     useEffect(()=>{
-        axios.get(`${BACKEND_URL}/api/vi/blog/bulk`,{
+        axios.get(`https://backend.tanyashukla006.workers.dev/api/vi/blog/bulk`,{
         headers:{
             Authorization:localStorage.getItem("token")
         }

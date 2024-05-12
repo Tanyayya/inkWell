@@ -95,10 +95,23 @@ blogRouter.use('/*', async (c, next) => {
     
     
 
-    const response=await prisma.post.findMany();
+    const blogs=await prisma.post.findMany({
+      select:{
+        content:true,
+        title:true,
+        id:true,
+        author:{
+          select:{
+            name:true
+          }
+        }
+      }
+    });
+      
+    
 
     return c.json({
-      response
+      blogs
     })
   })
 
@@ -112,6 +125,17 @@ blogRouter.use('/*', async (c, next) => {
     const response=await prisma.post.findMany({
         where:{
             id:id
+        },
+        select:{
+         
+          content:true,
+          title:true,
+          id:true,
+          author:{
+            select:{
+              name:true
+            }
+          }
         }
     });
 

@@ -12,12 +12,9 @@ const app = new Hono<{
 }>();
 
 
-app.use('/*',cors());
+app.use(cors());
 app.route("/api/vi/user",userRouter);
 app.route("/api/vi/blog",blogRouter);
-
-
-
 
 
 

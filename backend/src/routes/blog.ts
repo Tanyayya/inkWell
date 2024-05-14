@@ -11,32 +11,32 @@ export const blogRouter = new Hono<{
     JWT_SECRET:string,
     
 	},
-//   Variables:{
-//     userId:string
-// }
+  Variables:{
+    userId:string
+}
 }>();
 
-blogRouter.use('/*', async (c, next) => {
-    const header=c.req.header('authorization');
-    //const token=header?.split(" ")[1];
-    if(!header)
-    {
-       c.status(404);
-      return c.json({error:"Authorization token not found"})
-    }
-    const response=await verify(header,c.env.JWT_SECRET);
-    if(response)
-    {
-        //c.set('userId',response.id)
-        await next();
-    }
-    else
-    {
-      c.status(403);
-      return c.json({error:"Unauthorized"});
-      }
-    }
-  )
+// blogRouter.use('/*', async (c, next) => {
+//     const header=c.req.header('authorization');
+//     //const token=header?.split(" ")[1];
+//     if(!header)
+//     {
+//        c.status(404);
+//       return c.json({error:"Authorization token not found"})
+//     }
+//     const response=await verify(header,c.env.JWT_SECRET);
+//     if(response)
+//     {
+//         c.set('userId',response.id)
+//         await next();
+//     }
+//     else
+//     {
+//       c.status(403);
+//       return c.json({error:"Unauthorized"});
+//       }
+//     }
+//   )
   
   blogRouter.post('/', async (c) => {
     const prisma = new PrismaClient({

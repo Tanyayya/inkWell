@@ -11,9 +11,9 @@ export const blogRouter = new Hono<{
     JWT_SECRET:string,
     
 	},
-    Variables:{
-        userId:string
-    }
+//   Variables:{
+//     userId:string
+// }
 }>();
 
 blogRouter.use('/*', async (c, next) => {
@@ -27,7 +27,7 @@ blogRouter.use('/*', async (c, next) => {
     const response=await verify(header,c.env.JWT_SECRET);
     if(response)
     {
-        c.set('userId',response.id)
+        //c.set('userId',response.id)
         await next();
     }
     else
@@ -56,7 +56,7 @@ blogRouter.use('/*', async (c, next) => {
         data:{
             title:body.title,
             content:body.content,
-            authorId:c.get("userId")
+            authorId:"2"//c.get("userId")
         }
     })
     return c.json({

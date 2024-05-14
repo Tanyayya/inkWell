@@ -15,25 +15,17 @@ export const Auth =({type}:{type:"signup"|"signin"}) =>{
     
     const sendRequest = async() =>{
 
-        try {
-            const response = await axios.post(
-                `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
-                postInputs,
-                {
-                    headers: {
-                        "Authorization":localStorage.getItem("token") // Set the Authorization header with the token
-                    }
-                }
-            );
+         try {
+            const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`, postInputs);
             const jwt = response.data;
             localStorage.setItem("token", jwt);
             navigate("/blogs");
-        } catch (e) {
-            alert("Error while signing up");
+        } catch(e) {
+            alert("Error while signing up")
             // alert the user here that the request failed
         }
-        
-    }
+        }
+    
     
     return <div className=" h-screen flex justify-center flex-col">
        <div className="flex justify-center">

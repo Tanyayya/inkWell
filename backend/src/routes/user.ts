@@ -83,8 +83,8 @@ export const userRouter = new Hono<{
     return c.json({error:"User not found"});
     
   }
-  const secret = 'mySecretKey'
-  const token = await sign({id:response.id}, secret)
+
+  const token = await sign({id:response.id}, c.env.JWT_SECRET)
   
   return c.json({
     jwt:token

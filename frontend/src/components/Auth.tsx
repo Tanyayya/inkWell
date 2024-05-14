@@ -21,7 +21,7 @@ export const Auth =({type}:{type:"signup"|"signin"}) =>{
                 postInputs,
                 {
                     headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("token") // Set the Authorization header with the token
+                        "Authorization":localStorage.getItem("token") // Set the Authorization header with the token
                     }
                 }
             );

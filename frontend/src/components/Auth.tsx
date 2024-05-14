@@ -12,43 +12,29 @@ export const Auth =({type}:{type:"signup"|"signin"}) =>{
         password:""
     })
 
-    // async function sendRequest() {
-    //     try {
-    //     //     const response = await axios.post(`${BACKEND_URL}/api/vi/user/${type === "signup" ? "signup" : "signin"}`, postInputs,{
-    //     //     headers: {
-    //     //         origin : '/*',
-    //     //         method:'POST'
-    //     // }});
-    //     const response = await axios({
-    //         method: 'post', 
-    //         url: `${BACKEND_URL}/api/vi/user/${type === "signup" ? "signup" : "signin"}`,
-    //         data: {postInputs},
-    //         headers: {
-    //           //Authorization: 'Bearer ' + varToken
-    //         }
-    //       })
-    //         const jwt = response.data;
-    //         localStorage.setItem("token", jwt);
-    //         navigate("/blogs");
-    //     } catch(e) {
-    //         alert("Error while signing up")
-    //         // alert the user here that the request failed
-    //     }
-    // }
+    
     const sendRequest = async() =>{
 
-        try{
-            const response = await axios.post(`${BACKEND_URL}/api/vi/user/${type}`, postInputs);
-            const  data = response.data;
-            console.log(data);
-            localStorage.setItem( "userInfo", data.jwt);
-            navigate("/blogs")
+        try {
+            const response = await axios.post(
+                `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
+                postInputs,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("token") // Set the Authorization header with the token
+                    }
+                }
+            );
+            const jwt = response.data;
+            localStorage.setItem("token", jwt);
+            navigate("/blogs");
+        } catch (e) {
+            alert("Error while signing up");
+            // alert the user here that the request failed
         }
-        catch(error){
-            alert("Don't cry")
-        }
-
+        
     }
+    
     return <div className=" h-screen flex justify-center flex-col">
        <div className="flex justify-center">
         <div>

@@ -17,8 +17,13 @@ export const blogRouter = new Hono<{
 }>();
 
 blogRouter.use('/*', async (c, next) => {
-    const header=c.req.header('authorization')||"";
+    const header=c.req.header('authorization')||'';
     //const token=header?.split(" ")[1];
+    if(!header)
+    {
+       c.status(404);
+      return c.json({error:"Authorization token not found"})
+    }
     const response=await verify(header,c.env.JWT_SECRET);
     if(response)
     {

@@ -58,9 +58,7 @@ export const userRouter = new Hono<{
   })
   
   userRouter.post('/signin', async (c) => {
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate())
+   
   
   const body = await c.req.json();
   const {success}=signinInput.safeParse(body);
@@ -71,7 +69,11 @@ export const userRouter = new Hono<{
         message:"Invalid Inputs"
     })
   }
-  const response=await prisma.user.findUnique({
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
+
+  const response=await prisma.user.findFirst({
     where:{
       email:body.email,
       
@@ -86,7 +88,5 @@ export const userRouter = new Hono<{
 
   const token = await sign({id:response.id}, c.env.JWT_SECRET)
   
-  return c.json({
-    jwt:token
-  });
+  return c.text(token)
   })

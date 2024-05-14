@@ -17,7 +17,7 @@ export const blogRouter = new Hono<{
 }>();
 
 blogRouter.use('/*', async (c, next) => {
-    const header=c.req.header('authorization')||'';
+    const header=c.req.header('authorization');
     //const token=header?.split(" ")[1];
     if(!header)
     {

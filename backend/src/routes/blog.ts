@@ -39,9 +39,7 @@ export const blogRouter = new Hono<{
 })
   
   blogRouter.post('/', async (c) => {
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
+    
     
     const body = await c.req.json();
     const {success}=createBlog.safeParse(body);
@@ -52,11 +50,14 @@ export const blogRouter = new Hono<{
         message:"Invalid Inputs"
     })
   }
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
     const response=await prisma.post.create({
         data:{
             title:body.title,
             content:body.content,
-            authorId:"2"//c.get("userId")
+            authorId:c.get("userId")
         }
     })
     return c.json({

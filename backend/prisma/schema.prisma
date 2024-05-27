@@ -19,6 +19,7 @@ model User {
   email    String   @unique
   name     String?
   password String
+  about String?
   posts    Post[]
 }
 
@@ -29,4 +30,5 @@ model Post {
   published Boolean  @default(false)
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
+  publishedDate DateTime @default(now()) @db.Date
 }

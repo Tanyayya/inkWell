@@ -69,6 +69,17 @@ export const userRouter = new Hono<{
         message:"Invalid Inputs"
     })
   }
+  const password=new TextEncoder().encode(body.password);
+  
+  const hashPassword=await crypto.subtle.digest({
+    name:'SHA-256'
+  },
+  password)
+  
+  const hexString = [...new Uint8Array(hashPassword)]
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
 }).$extends(withAccelerate())
@@ -76,7 +87,7 @@ export const userRouter = new Hono<{
   const response=await prisma.user.findFirst({
     where:{
       email:body.email,
-      
+      password:hexString
     }
   })
   if(!response)
@@ -89,4 +100,30 @@ export const userRouter = new Hono<{
   const token = await sign({id:response.id}, c.env.JWT_SECRET)
   
   return c.text(token)
+  })
+
+
+  userRouter.get("/",async (c)=>{
+      const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+  
+    const token =  c.req.header("authorization");
+    const {header,payload} = decode(token||"");
+   const userId=payload.id;
+    const response=await prisma.user.findFirst({
+        where:{
+            id:userId
+        },
+        select:{
+         
+          name:true,
+          
+          }
+        })
+   
+
+    return c.json({
+      response
+    })
   })

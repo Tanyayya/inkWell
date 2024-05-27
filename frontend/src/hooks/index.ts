@@ -7,6 +7,7 @@ export interface Blog {
     "content":string,
     "title":string,
     "id":string,
+    "publishedDate":string,
     "author":{
         "name":string
     }
@@ -27,6 +28,7 @@ export const useBlog =({id}:{id:string}) =>{
                 content: responseData.content,
                 title: responseData.title,
                 id: responseData.id,
+                publishedDate:responseData.publishedDate,
                 author: responseData.author ? { name: responseData.author.name || "Anonymous" } : { name: "" }
             };
                 setBlog(blogData);

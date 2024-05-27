@@ -1,8 +1,11 @@
 import { Appbar } from "./Appbar"
 import { Blog } from "../hooks"
-import { Avatar } from "./BlogCard"
+import { Avatar,Circle } from "./BlogCard"
+import dateFormat from 'dateformat';
+
 
 export const CompleteBlog  =({blog}:{blog:Blog}) => {
+    
     return <div>
         <Appbar />
         <div className="flex justify-center">
@@ -11,8 +14,15 @@ export const CompleteBlog  =({blog}:{blog:Blog}) => {
                 <div className="text-5xl font-extrabold">
                     {blog.title}
                     </div>
-                    <div className="text-slate-500 pt-4">
-                        Post on 2nd Dec 2023
+                    <div className=" flex  text-slate-500 pt-4">
+                    <div className="flex justify-center flex-col "> {`${Math.ceil(blog.content.length/100)} min read`} </div>
+            <div className="flex justify-center flex-col pl-2 "> <Circle></Circle></div>
+            <div className="flex justify-center flex-col pl-2 ">
+            {dateFormat(blog.publishedDate, "mmmm dS, yyyy")}
+            </div>
+                    
+                    
+                    
                     </div>
                     <div className="pt-4">
                         {blog.content}

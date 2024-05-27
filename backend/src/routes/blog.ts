@@ -106,6 +106,7 @@ export const blogRouter = new Hono<{
         content:true,
         title:true,
         id:true,
+        publishedDate:true,
         author:{
           select:{
             name:true
@@ -137,6 +138,7 @@ export const blogRouter = new Hono<{
           content:true,
           title:true,
           id:true,
+          publishedDate:true,
           author:{
             select:{
               name:true

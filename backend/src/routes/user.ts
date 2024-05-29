@@ -11,51 +11,52 @@ export const userRouter = new Hono<{
 	}
 }>();
   
-  userRouter.post('/signup', async (c) => {
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate())
-  
-  const body = await c.req.json();
-  const {success}=signupInput.safeParse(body);
-  if(!success)
-  {
-    c.status(403);
-    return c.json({
-        message:"Invalid Inputs"
-    })
-  }
-  const password=new TextEncoder().encode(body.password);
-  
-  const hashPassword=await crypto.subtle.digest({
-    name:'SHA-256'
-  },
-  password)
-  
-  const hexString = [...new Uint8Array(hashPassword)]
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('')
-  try{
-  const response=await prisma.user.create({
-    data:{
-      email:body.email,
-      password:hexString,
-      name:body.name
-    }
-  })
-  
-  const token = await sign({id:response.id}, c.env.JWT_SECRET)
-  
+userRouter.post('/signup', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
+
+const body = await c.req.json();
+const {success}=signupInput.safeParse(body);
+if(!success)
+{
+  c.status(403);
   return c.json({
-    jwt:token
-  });
-  }catch(err)
-  {
-     c.status(403);
-     return c.text("Invalid Credentials");
-  }
-    
+      message:"Invalid Inputs"
   })
+}
+const password=new TextEncoder().encode(body.password);
+
+const hashPassword=await crypto.subtle.digest({
+  name:'SHA-256'
+},
+password)
+
+const hexString = [...new Uint8Array(hashPassword)]
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+try{
+const response=await prisma.user.create({
+  data:{
+    email:body.email,
+    password:hexString,
+    name:body.name
+  }
+})
+
+const token = await sign({id:response.id}, c.env.JWT_SECRET)
+
+return c.json({
+  jwt:token,
+  name:body.name
+});
+}catch(err)
+{
+   c.status(403);
+   return c.text("Invalid Credentials");
+}
+  
+})
   
   userRouter.post('/signin', async (c) => {
    
@@ -99,7 +100,7 @@ export const userRouter = new Hono<{
 
   const token = await sign({id:response.id}, c.env.JWT_SECRET)
   
-  return c.text(token)
+  return c.json({ token, name: response.name });
   })
 
 

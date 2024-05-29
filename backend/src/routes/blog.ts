@@ -65,33 +65,39 @@ export const blogRouter = new Hono<{
     })
   })
   
-  blogRouter.put('/', async (c) => {
-    const prisma = new PrismaClient({
+  blogRouter.put('/:id', async (c) => {
+    try{
+      const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
     
+    const id=c.req.param("id");
     const body = await c.req.json();
-    const {success}=updateBlog.safeParse(body);
-  if(!success)
-  {
-    c.status(403);
-    return c.json({
-        message:"Invalid Inputs"
-    })
-  }
+  
     const response=await prisma.post.update({
         where:{
-            id:body.id
+            id:id
         },
         data:{
             title:body.title,
             content:body.content,
+            published:body.published,
+            authorId:c.get("userId")
             
         }
     })
     return c.json({
-        id:response.id
+        response
     })
+    
+    } catch(e)
+    {
+      console.error(e);
+    c.status(500);
+    return c.json({
+      error: "Internal Server Error"
+    });
+    }
   })
   
   blogRouter.get('/bulk', async (c) => {
@@ -141,6 +147,7 @@ export const blogRouter = new Hono<{
           publishedDate:true,
           author:{
             select:{
+              id:true,
               name:true
             }
           }
@@ -151,3 +158,6 @@ export const blogRouter = new Hono<{
       response
     })
   })
+
+
+  

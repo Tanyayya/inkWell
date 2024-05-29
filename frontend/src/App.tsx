@@ -4,6 +4,9 @@ import { Signin } from './pages/Signin'
 import { Blog } from './pages/Blog'
 import {Blogs} from './pages/Blogs'
 import { Publish } from './pages/Publish'
+import { User } from './pages/User'
+import { EditPost } from './pages/EditPost'
+
 function App() {
 
   return (
@@ -15,10 +18,13 @@ function App() {
           <Route path="/blog/:id" element={<Blog />} />
           <Route path="/blogs" element={<Blogs/>}></Route>
           <Route path="/publish" element={<Publish/>}></Route>
+          <Route path="/me" element={<User/>}></Route>
+          <Route path="/editPost/:id" element={<EditPost/>}></Route>
         </Routes>
       </BrowserRouter>
     </>
   )
 }
+
 
 export default App

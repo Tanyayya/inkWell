@@ -2,15 +2,38 @@ import { Appbar } from "./Appbar"
 import { Blog } from "../hooks"
 import { Avatar,Circle } from "./BlogCard"
 import dateFormat from 'dateformat';
+import { decode } from "hono/jwt";
+import { Link } from "react-router-dom";
 
+export interface BlogID{
+    title:string,
+    content:string,
+    
+    id:string
+}
 
 export const CompleteBlog  =({blog}:{blog:Blog}) => {
-    
+     const token=localStorage.getItem("token");
+     
+            const {payload} = decode(token||"");
+            const userId=payload.id;
+
+        
+   
+     
     return <div>
         <Appbar />
+        <div className="flex justify-center flex-col ">
+
+            <div className="p-8 ">
+       <Link to={`/editPost/${blog.id}`}> {(userId==blog.author.id)?<button type="button" className="text-gray-900  bg-slate-200 hover:text-white border border-gray-800 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ">Edit Post</button>:null}
+        </Link>
+        </div>
         <div className="flex justify-center">
+           
         <div className="grid grid-cols-12 px-10 w-full pt-200 mx-w-screen-xl  pt-12">
             <div className="col-span-8">
+
                 <div className="text-5xl font-extrabold">
                     {blog.title}
                     </div>
@@ -48,6 +71,7 @@ export const CompleteBlog  =({blog}:{blog:Blog}) => {
                 
             </div>
             
+        </div>
         </div>
         </div>
     </div>

@@ -10,7 +10,7 @@ export const Blog = () =>{
     const {loading,blog}=useBlog({
         id: id||""
     });
-   console.log(blog)
+   
     if(loading||!blog)
     {
         return <div>

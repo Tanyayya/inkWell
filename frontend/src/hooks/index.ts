@@ -9,7 +9,8 @@ export interface Blog {
     "id":string,
     "publishedDate":string,
     "author":{
-        "name":string
+        "name":string,
+        "id":string
     }
 }
 export const useBlog =({id}:{id:string}) =>{
@@ -29,13 +30,15 @@ export const useBlog =({id}:{id:string}) =>{
                 title: responseData.title,
                 id: responseData.id,
                 publishedDate:responseData.publishedDate,
-                author: responseData.author ? { name: responseData.author.name || "Anonymous" } : { name: "" }
+                author : responseData.author
+                ? { id: responseData.author.id, name: responseData.author.name || "Anonymous" }
+                : { id: "", name: "Anonymous" }
             };
                 setBlog(blogData);
                 setLoading(false);
             })
     }, [id])
-     console.log(blog)
+     
     return {
 
         loading,
@@ -56,10 +59,14 @@ export const useBlogs =() =>{
         .then(res=>{
             setBlogs(res.data.blogs);
             setLoading(false)
+            
         })
     },[])
+   
     return {
         loading,
-        blogs
+        blogs,
+       
+
     }
 }

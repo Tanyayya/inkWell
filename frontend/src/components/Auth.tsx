@@ -4,21 +4,34 @@ import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { BACKEND_URL } from "../config"
 
+
+
+export interface User {
+    "name":string,
+    
+}
 export const Auth =({type}:{type:"signup"|"signin"}) =>{
     const navigate=useNavigate();
+    
+    
     const [postInputs,setPostinputs]=useState<SignupInput>({
         name:"",
         email:"",
         password:""
     })
+   
+   
 
     
     const sendRequest = async() =>{
 
          try {
             const response = await axios.post(`${BACKEND_URL}/api/vi/user/${type === "signup" ? "signup" : "signin"}`, postInputs);
-            const jwt = response.data;
-            localStorage.setItem("token", jwt);
+            const { token, name } = response.data; 
+            console.log(token)
+            localStorage.setItem("token", token);
+            localStorage.setItem("name",name)
+
             navigate("/blogs");
         } catch(e) {
             alert("Error while signing up")

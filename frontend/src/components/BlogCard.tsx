@@ -6,24 +6,28 @@ export interface BlogCardProps {
     title:string,
     content:string,
     publishedDate: string,
-    id:string
+    id:string,
+    anonymous:boolean
 }
 export const BlogCard = ({
     authorName,
     title,
     content,
     publishedDate,
-    id
+    id,
+    anonymous
 }:BlogCardProps) =>{
+    const name=(!anonymous)?authorName:"Anonymous"
+   
     
     return <Link to={`/blog/${id}`} className="flex justify-center">
     <div className="p-4 border-b border-slate-200 pb-4 w-screen max-w-screen-md cursor-pointer">
         <div className="flex">
             <div className="">
-            <Avatar name={authorName}></Avatar>
+            <Avatar name={name}></Avatar>
             </div>
             
-            <div className="flex justify-center flex-col font-extralight text-sm pl-2"> {authorName} </div>
+            <div className="flex justify-center flex-col font-extralight text-sm pl-2"> {name} </div>
             <div className="flex justify-center flex-col pl-2 "> <Circle></Circle></div>
             <div className="flex justify-center flex-col pl-2 font-thin text-slate-500 text-sm">
             {dateFormat(publishedDate, "mmmm dS, yyyy")}

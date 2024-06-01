@@ -10,9 +10,12 @@ interface Blog {
     id: string;
     title: string;
     content: string;
+    publishedDate:string;
     author: {
+
       name: string | null;
     };
+    anonymous:boolean
   }
 
   
@@ -25,7 +28,7 @@ interface Blog {
 const BlogPaginatedItems = () => {
     
   const { loading, blogs } = useBlogs();
-  const publishedDate = new Date().toString();
+  
 
   if (loading) {
     return (
@@ -53,7 +56,9 @@ const BlogPaginatedItems = () => {
             authorName={blog.author.name || "Anonymous"}
             title={blog.title}
             content={blog.content}
-            publishedDate={publishedDate}
+            publishedDate={blog.publishedDate}
+            anonymous={blog.anonymous}
+            //anonymous={blog.anonymous}
           />
         ))}
       </>
@@ -63,15 +68,13 @@ const BlogPaginatedItems = () => {
   const PaginatedItems: React.FC<PaginatedItemsProps>  = ({ itemsPerPage }) => {
     const [itemOffset, setItemOffset] = useState(0);
     const endOffset = itemOffset + itemsPerPage;
-    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+    
     const blogItems = blogs.slice(itemOffset, endOffset);
     const pageCount = Math.ceil(blogs.length / itemsPerPage);
 
     const handlePageClick = (event:{selected:number}) => {
       const newOffset = (event.selected * itemsPerPage) % blogs.length;
-      console.log(
-        `User requested page number ${event.selected}, which is offset ${newOffset}`
-      );
+      
       setItemOffset(newOffset);
     };
 

@@ -3,16 +3,18 @@ import { ChangeEvent, useState } from "react"
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
-import { decode } from "hono/jwt";
 
 import { Blog } from "../hooks"
 
 export const BlogUpdate =({blog}:{blog:Blog})=>{
     
     const [title,setTitle]=useState(blog.title);
+    
+    
+
     const [description,setDescription]=useState(blog.content);
-    const [published,setPublished]=useState(false);
-    const [anonymous,setAnonymous]=useState(false);
+    const [published,setPublished]=useState(true);
+    const [anonymous,setAnonymous]=useState(blog.anonymous);
 
     const navigate=useNavigate();
     return <div>
@@ -25,42 +27,42 @@ export const BlogUpdate =({blog}:{blog:Blog})=>{
                 <input  onClick={()=>{
                     setPublished(!published)
                    
-                }} id="publish-checkbox" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 "/>
+                }} id="publish-checkbox" type="checkbox" checked={published} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 "/>
                 <label  className="ms-2 text-sm font-medium text-gray-900 ">Publish</label>
             </div>
             <div className="flex items-center mb-4">
                 <input onClick={()=>{
                     setAnonymous(!anonymous)
                    
-                }} id="anonymous-checkbox" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 "/>
+                }} id="anonymous-checkbox" type="checkbox" checked={anonymous} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 "/>
                 <label  className="ms-2 text-sm font-medium text-gray-900 ">Post Anonymously</label>
             </div>
             </div>
                 <input onChange={(e)=>{
                     setTitle(e.target.value)
-                }} type="text" id="helper-text" value={blog.title} aria-describedby="helper-text-explanation" className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Title"/>
+                }} type="text" id="helper-text" defaultValue={blog.title} aria-describedby="helper-text-explanation" className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-full p-2.5 " placeholder="Title"/>
+                
                 <TextEditor content={blog.content} onChange={(e)=>{
                     setDescription(e.target.value)
                 }}/>
+                
                 <button onClick={async ()=>
                 {
-                    const {payload} = decode(localStorage.getItem("token")||"");
-                    let authorId=payload.id;
-                    if(anonymous)
-                        {
-                            authorId=null;
-                        }
+                   
+                    
                     await axios.put(`${BACKEND_URL}/api/vi/blog/${blog.id}`,
                     {
                         title,
                         content:description,
                         published,
-                        authorId
+                        anonymous
+                       
                     },{
                         headers:{
                             Authorization:localStorage.getItem("token")
                         }
                     });
+                   
                     navigate(`/blog/${blog.id}`)
                     
                 }}
@@ -87,7 +89,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ onChange, content }) =>  {
    <div className=" w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
        <div className="  py-2 bg-white rounded-t-lg ">
            <label  className="sr-only">Your post</label>
-           <textarea value={content} onChange={onChange} id="comment" rows={4} className="focus:outline-none w-full px-0 text-sm text-gray-900 bg-white border-0  focus:ring-0 " placeholder="Write your post..." required ></textarea>
+           <textarea defaultValue={content} onChange={onChange} id="comment" rows={4} className="focus:outline-none w-full px-0 text-sm text-gray-900 bg-white border-0  focus:ring-0 " placeholder="Write your post..." required ></textarea>
        </div>
        <div className="flex items-center justify-between px-3 py-2 border-t ">
            

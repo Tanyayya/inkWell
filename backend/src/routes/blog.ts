@@ -12,7 +12,8 @@ export const blogRouter = new Hono<{
     
 	},
   Variables:{
-    userId:string
+    userId:string,
+    userName:string
 }
 }>();
 
@@ -23,6 +24,7 @@ export const blogRouter = new Hono<{
       const user = await verify(authHeader, c.env.JWT_SECRET);
       if (user) {
           c.set("userId", user.id);
+          c.set("userName",user.name)
           await next();
       } else {
           c.status(403);
@@ -57,7 +59,8 @@ export const blogRouter = new Hono<{
         data:{
             title:body.title,
             content:body.content,
-            authorId:c.get("userId")
+            authorId:c.get("userId"),
+            
         }
     })
     return c.json({
@@ -65,40 +68,56 @@ export const blogRouter = new Hono<{
     })
   })
   
-  blogRouter.put('/:id', async (c) => {
-    try{
-      const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
-    
-    const id=c.req.param("id");
-    const body = await c.req.json();
   
-    const response=await prisma.post.update({
-        where:{
-            id:id
-        },
-        data:{
-            title:body.title,
-            content:body.content,
-            published:body.published,
-            authorId:c.get("userId")
             
+            
+  blogRouter.put('/:id', async (c) => {
+    try {
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env.DATABASE_URL,
+        }).$extends(withAccelerate());
+
+        const id = c.req.param("id");
+        const body = await c.req.json();
+
+        // Fetch the author ID based on the provided author name, or set it to null if anonymous
+        let authorId = "";
+        if (body.author && body.author !== "Anonymous") {
+            const author = await prisma.user.findFirst({
+                where: {
+                    name: body.author,
+                },
+            });
+            if (author) {
+                authorId = author.id;
+            }
         }
-    })
-    return c.json({
-        response
-    })
-    
-    } catch(e)
-    {
-      console.error(e);
-    c.status(500);
-    return c.json({
-      error: "Internal Server Error"
-    });
+
+        const response = await prisma.post.update({
+            where: {
+                id: id,
+            },
+            data: {
+                title: body.title,
+                content: body.content,
+                published: body.published,
+                anonymous:body.anonymous
+                 // Use the author ID if found, or null if anonymous
+            },
+        });
+
+        return c.json({
+            response,
+        });
+    } catch (e) {
+        console.error(e);
+        c.status(500);
+        return c.json({
+            error: "Internal Server Error",
+        });
     }
-  })
+});
+
   
   blogRouter.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
@@ -113,6 +132,7 @@ export const blogRouter = new Hono<{
         title:true,
         id:true,
         publishedDate:true,
+        anonymous:true,
         author:{
           select:{
             name:true
@@ -145,6 +165,7 @@ export const blogRouter = new Hono<{
           title:true,
           id:true,
           publishedDate:true,
+          anonymous:true,
           author:{
             select:{
               id:true,

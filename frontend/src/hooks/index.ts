@@ -8,6 +8,7 @@ export interface Blog {
     "title":string,
     "id":string,
     "publishedDate":string,
+    "anonymous":boolean,
     "author":{
         "name":string,
         "id":string
@@ -30,6 +31,7 @@ export const useBlog =({id}:{id:string}) =>{
                 title: responseData.title,
                 id: responseData.id,
                 publishedDate:responseData.publishedDate,
+                anonymous:responseData.anonymous,
                 author : responseData.author
                 ? { id: responseData.author.id, name: responseData.author.name || "Anonymous" }
                 : { id: "", name: "Anonymous" }

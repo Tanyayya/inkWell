@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 export interface BlogID{
     title:string,
     content:string,
-    
+    anonymous:boolean,
     id:string
 }
 
@@ -18,6 +18,7 @@ export const CompleteBlog  =({blog}:{blog:Blog}) => {
             const {payload} = decode(token||"");
             const userId=payload.id;
 
+    const name=(blog.anonymous)?"Anonymous":blog.author.name;
         
    
      
@@ -55,11 +56,12 @@ export const CompleteBlog  =({blog}:{blog:Blog}) => {
                 <div className="text-slate-500 font-bold">Author</div>
                 <div className="flex">
                     <div className="pr-4 flex-col justify-center"> 
-                    <Avatar size="big"name={blog.author.name}></Avatar>
+                    
+                    <Avatar size="big"name={name}></Avatar>
                     </div>
                     <div>
                     <div className="text-xl font-bold">
-                        {blog.author.name}
+                        {name}
                         </div>
                         
                         <div className="pt-2 text-slate-500">

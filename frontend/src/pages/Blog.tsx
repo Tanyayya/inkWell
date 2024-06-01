@@ -4,6 +4,7 @@ import { CompleteBlog } from "../components/CompleteBlog";
 import { Appbar } from "../components/Appbar";
 
 
+
 export const Blog = () =>{
     const {id} =useParams();
     

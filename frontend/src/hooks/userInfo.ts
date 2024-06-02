@@ -4,6 +4,11 @@ import { BACKEND_URL } from "../config";
 
 export interface User {
     name: string;
+    email: string;
+    password: string;
+    about:string;
+    posts:[]
+    saved:[]
 }
 
 export const useUserInfo = () => {

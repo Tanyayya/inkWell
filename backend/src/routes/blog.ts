@@ -182,3 +182,37 @@ export const blogRouter = new Hono<{
 
 
   
+  blogRouter.get('/', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+    
+    
+    
+    const response=await prisma.post.findMany({
+        where:{
+            id:id
+        },
+        select:{
+         
+          content:true,
+          title:true,
+          id:true,
+          publishedDate:true,
+          anonymous:true,
+          author:{
+            select:{
+              id:true,
+              name:true
+            }
+          }
+        }
+    });
+
+    return c.json({
+      response
+    })
+  })
+
+
+  

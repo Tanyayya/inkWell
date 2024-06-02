@@ -21,6 +21,7 @@ model User {
   password String
   about String?
   posts    Post[]
+  saved  String[]
 }
 
 model Post {

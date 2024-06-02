@@ -112,13 +112,18 @@ return c.json({
     const token =  c.req.header("authorization");
     const {header,payload} = decode(token||"");
    const userId=payload.id;
-    const response=await prisma.user.findFirst({
+    const response=await prisma.user.findUnique({
         where:{
             id:userId
         },
         select:{
          
           name:true,
+          email:true,
+          password:true,
+          about:true,
+          posts:true,
+          saved:true
           
           }
         })
@@ -128,3 +133,41 @@ return c.json({
       response
     })
   })
+
+  userRouter.put("/",async (c)=>{
+    try {
+      const prisma = new PrismaClient({
+          datasourceUrl: c.env.DATABASE_URL,
+      }).$extends(withAccelerate());
+
+      const token =  c.req.header("authorization");
+    const {header,payload} = decode(token||"");
+   const userId=payload.id;
+      const body = await c.req.json();
+
+      // Fetch the author ID based on the provided author name, or set it to null if anonymous
+      
+
+      const response = await prisma.user.update({
+          where: {
+              id: userId,
+          },
+          data: {
+              about:body.about,
+              saved:body.saved
+               // Use the author ID if found, or null if anonymous
+          },
+      });
+
+      return c.json({
+          response,
+      });
+  } catch (e) {
+      console.error(e);
+      c.status(500);
+      return c.json({
+          error: "Internal Server Error",
+      });
+  }
+});
+

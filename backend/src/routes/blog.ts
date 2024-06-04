@@ -5,6 +5,7 @@ import {  verify } from 'hono/jwt'
 import { createBlog, updateBlog } from "@tanyashukla/blog-common";
 
 
+
 export const blogRouter = new Hono<{
 	Bindings: {
 		DATABASE_URL: string,
@@ -13,7 +14,8 @@ export const blogRouter = new Hono<{
 	},
   Variables:{
     userId:string,
-    userName:string
+    userName:string,
+    ids:string
 }
 }>();
 
@@ -182,37 +184,119 @@ export const blogRouter = new Hono<{
 
 
   
-  blogRouter.get('/', async (c) => {
+  blogRouter.post('/save', async (c) => {
     const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
-    
-    
-    
-    const response=await prisma.post.findMany({
-        where:{
-            id:id
-        },
-        select:{
-         
-          content:true,
-          title:true,
-          id:true,
-          publishedDate:true,
-          anonymous:true,
-          author:{
-            select:{
-              id:true,
-              name:true
-            }
-          }
-        }
-    });
+      datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
 
-    return c.json({
-      response
-    })
-  })
+  const body = await c.req.json();
+  const userId=c.get("userId")
+
+  try {
+      const user = await prisma.user.findUnique({
+          where: { id: userId }
+      });
+
+      if (!user) {
+           c.status(404)
+          return c.json({ error: 'User not found' });
+      }
+      
+      if (!user.saved.includes(body.id)) {
+       // const updatedSaved = [...user.saved, id];
+          await prisma.user.update({
+              where: { id: userId },
+              data: {
+                  saved: {
+                      push: body.id
+                  }
+              }
+          });
+      }
+
+       c.status(200)
+      return c.json({ message: 'Post saved successfully' });
+  } catch (error) {
+      console.error('Error saving post:', error);
+     c.status(500)
+      return c.json({ error: 'Internal Server Error' });
+  }
+});
 
 
-  
+blogRouter.post('/unsave', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
+
+const body = await c.req.json();
+const userId=c.get("userId")
+
+  try {
+      const user = await prisma.user.findUnique({
+          where: { id: userId }
+      });
+
+      if (!user) {
+           c.status(404)
+          return c.json({ error: 'User not found' });
+      }
+
+      if (user.saved.includes(body.id)) {
+          await prisma.user.update({
+              where: { id: userId },
+              data: {
+                  saved: {
+                      set: user.saved.filter(id => id !== body.id)
+                  }
+              }
+          });
+      }
+
+       c.status(200)
+      return c.json({ message: 'Post unsaved successfully' });
+  } catch (error) {
+      console.error('Error unsaving post:', error);
+       c.status(500)
+      return c.json({ error: 'Internal Server Error' });
+  }
+});
+
+
+blogRouter.post('/unsave', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
+
+const body = await c.req.json();
+const userId=c.get("userId")
+
+  try {
+      const user = await prisma.user.findUnique({
+          where: { id: userId }
+      });
+
+      if (!user) {
+           c.status(404)
+           return c.json({ error: 'User not found' });
+      }
+
+      if (user.saved.includes(body.id)) {
+          await prisma.user.update({
+              where: { id: userId },
+              data: {
+                  saved: {
+                      set: user.saved.filter(id => id !== body.id)
+                  }
+              }
+          });
+      }
+
+       c.status(200)
+       return c.json({ message: 'Post unsaved successfully' });
+  } catch (error) {
+      console.error('Error unsaving post:', error);
+       c.status(500)
+       return c.json({ error: 'Internal Server Error' });
+  }
+});

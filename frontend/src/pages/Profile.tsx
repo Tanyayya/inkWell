@@ -15,8 +15,8 @@ export const Profile=()=>{
     }
     return <div>
        <Appbar></Appbar>
-       <div className="flex p-6">
-       <Avatar size="big" name={user?.name}></Avatar>
+       <div className="max-w-screen-xl flex p-6 mx-auto  flex-wrap">
+       <Avatar size="big" name={user.name}></Avatar>
         <div className="p-2 text-xl font-semibold ">{user.name}</div>
        </div>
         

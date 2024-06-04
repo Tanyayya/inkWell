@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import dateFormat from "dateformat"
+import { SavedIcon } from "./SavedIcon"
 
 export interface BlogCardProps {
     authorName:string,
@@ -9,6 +10,8 @@ export interface BlogCardProps {
     id:string,
     anonymous:boolean
 }
+
+
 export const BlogCard = ({
     authorName,
     title,
@@ -19,6 +22,9 @@ export const BlogCard = ({
 }:BlogCardProps) =>{
     const name=(!anonymous)?authorName:"Anonymous"
    
+
+    
+
     
     return <Link to={`/blog/${id}`} className="flex justify-center">
     <div className="p-4 border-b border-slate-200 pb-4 w-screen max-w-screen-md cursor-pointer">
@@ -39,12 +45,14 @@ export const BlogCard = ({
         <div className="text-md font-thin">
             {content.slice(0,100)+"..."}
         </div>
-        <div className=" text-slate-500 text-sm font-thin pt-4">
+        
+        <div className="flex justify-between text-slate-500 text-sm font-thin pt-4">
             {`${Math.ceil(content.length/100)} min read`}
+            <SavedIcon id={id}></SavedIcon>
         </div>
-        <div>
-
-        </div>
+        
+        
+       
     </div>
     </Link>
 }

@@ -14,6 +14,7 @@ interface Blog {
     author: {
 
       name: string | null;
+      
     };
     anonymous:boolean
   }
@@ -81,9 +82,9 @@ const BlogPaginatedItems = () => {
     return (
       <div>
         <Appbar />
-        <div className="flex justify-center flex-col ">
+        <div className="flex justify-center flex-col items-center">
           <Items blogItems={blogItems} />
-          <ReactPaginate className=" justify-around text-slate-500 p-4 font-bold  flex pb-4 w-screen cursor-pointer"
+          <ReactPaginate className="  max-w-screen-md justify-around text-slate-500 p-4 font-bold  flex pb-4 w-screen cursor-pointer"
             breakLabel="..."
             nextLabel="next >"
             onPageChange={handlePageClick}

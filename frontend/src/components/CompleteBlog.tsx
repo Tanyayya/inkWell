@@ -1,5 +1,5 @@
 import { Appbar } from "./Appbar"
-import { Blog } from "../hooks"
+import { Blogs} from "../hooks"
 import { Avatar,Circle } from "./BlogCard"
 import dateFormat from 'dateformat';
 import { decode } from "hono/jwt";
@@ -12,7 +12,7 @@ export interface BlogID{
     id:string
 }
 
-export const CompleteBlog  =({blog}:{blog:Blog}) => {
+export const CompleteBlog  =({blog}:{blog:Blogs}) => {
      const token=localStorage.getItem("token");
      
             const {payload} = decode(token||"");
@@ -65,7 +65,7 @@ export const CompleteBlog  =({blog}:{blog:Blog}) => {
                         </div>
                         
                         <div className="pt-2 text-slate-500">
-                            Random catch phrase about the author to catch user's attention
+                            {blog.author.about}
                          </div>
                     </div>
                       

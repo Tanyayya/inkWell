@@ -171,7 +171,8 @@ export const blogRouter = new Hono<{
           author:{
             select:{
               id:true,
-              name:true
+              name:true,
+              about:true
             }
           }
         }
@@ -300,3 +301,63 @@ const userId=c.get("userId")
        return c.json({ error: 'Internal Server Error' });
   }
 });
+
+blogRouter.post('/saved', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+    // const  userId  = c.get("userId");
+    // if (!userId) {
+    //      c.status(400)
+    //     return c.json({ error: 'User ID is required' });
+    // }
+
+    // try {
+    //   // Fetch the user
+    //   const user = await prisma.user.findUnique({
+    //     where: { id: userId },
+    //     select: { saved: true },
+    //   });
+      
+  
+    //   if (!user) {
+    //      c.status(404)
+    //     return c.json({ error: 'User not found' });
+    //   }
+      
+    //   // Fetch the posts based on the user's saved post IDs
+    //   const posts = await prisma.post.findMany({
+    //     where: { id: { in: user.saved } },
+    //   });
+  
+    //  return c.json(posts);
+      
+    // } catch (error) {
+    //   console.error(error);
+    //   c.status(500)
+    //   c.json({ error: 'Internal server error' });
+    // }
+    const body= await c.req.json()
+    const response=await prisma.post.findMany({
+        where:{
+            id:{
+               in:body.saved
+        }
+    },
+        select:{
+            content: true,
+            title: true,
+            id: true,
+            publishedDate: true,
+            anonymous: true,
+            author: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        }
+    })
+    return c.json({ response });
+  });
+  

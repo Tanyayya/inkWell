@@ -26,8 +26,8 @@ export const BlogCard = ({
     
 
     
-    return <Link to={`/blog/${id}`} className="flex justify-center">
-    <div className="p-4 border-b border-slate-200 pb-4 w-screen max-w-screen-md cursor-pointer">
+    return <Link to={`/blog/${id}`} className="flex justify-center  ">
+    <div className="p-4 border-b bg-slate-50 border-slate-200 pb-4 w-screen max-w-screen-md cursor-pointer">
         <div className="flex">
             <div className="">
             <Avatar name={name}></Avatar>

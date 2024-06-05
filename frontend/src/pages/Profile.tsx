@@ -40,7 +40,11 @@ export const Profile=()=>{
 
 </div>
 <div className={!home?'block':'hidden'}>
+    <div className="flex justify-center flex-col items-center   p-4 border border-slate-200">
+    <div className="flex justify-center text-gray-900 text-center bg-slate-200   text-l font-medium p-4 border border-slate-200 pb-4  w-screen max-w-screen-md">Saved Posts</div>
 <SavedPosts saved={user.saved}></SavedPosts>
+    </div>
+
 </div>
     
     </div>

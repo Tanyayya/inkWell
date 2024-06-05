@@ -19,7 +19,8 @@ export const SavedIcon=({id}:{id:string})=>{
         }
     }, [user, id]);
     return <div>
-        <Link to="/blogs">{(save===false)?<img onClick={async()=>{
+        {(save===false)?<img onClick={async(e)=>{
+            e.preventDefault();
                 await axios.post(`${BACKEND_URL}/api/vi/blog/save`,
                 {
                     id,
@@ -32,7 +33,8 @@ export const SavedIcon=({id}:{id:string})=>{
                 });
                 setSave(true); 
             }}src="/save.png" className="h-5 mr-2" alt="Flowbite Logo" />:
-            <img onClick={async()=>{
+            <img onClick={async(e)=>{
+                e.preventDefault();
                 await axios.post(`${BACKEND_URL}/api/vi/blog/unsave`,
                 {
                     id,
@@ -45,6 +47,6 @@ export const SavedIcon=({id}:{id:string})=>{
                 });
                 setSave(false); 
             }}src="/unsave.png" className="h-5 mr-2" alt="Flowbite Logo" />}
-</Link>
+
     </div>
 }

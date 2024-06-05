@@ -1,30 +1,38 @@
 import { useState,useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { BlogCard } from "../components/BlogCard";
 
 export type Saved =string;
 interface Post {
     id: string;
-    content: string;
     title: string;
-    publishedDate: string;
-    anonymous: boolean;
+    content: string;
+    publishedDate:string;
     author: {
-        id: string;
-        name: string;
+
+      name: string | null;
     };
+    anonymous:boolean
 }
 
  export const SavedPosts = ({ saved }: { saved: Saved[] }) => {
     const [posts, setPosts] = useState<Post[]>([]);
     
-    console.log(saved)
+   
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/api/vi/blog/saved`);
-                setPosts(response.data);
-            } catch (error) {
+                const response = await axios.post(`${BACKEND_URL}/api/vi/blog/saved`,
+                {
+                    saved
+                },{
+                    headers:{
+                        Authorization:localStorage.getItem("token")
+                    }
+                });
+               
+                setPosts(response.data.response)            } catch (error) {
                 console.error('Error fetching post data:', error);
             }
         };
@@ -36,14 +44,18 @@ interface Post {
     return (
         <div>
            
-           {posts.map(post => (
-                <div className="text-bold" key={post.id}>
-                    <h3>{post.title}</h3>
-                    <p>{post.content}</p>
-                    <small>{post.publishedDate}</small>
-                    <p>Author: {post.author.name}</p>
-                </div>
-            ))}
+           {posts.map((blog) => (
+          <BlogCard
+          key={blog.id}// Add a key prop for each item in the list
+            id={blog.id}
+            authorName={blog.author.name || "Anonymous"}
+            title={blog.title}
+            content={blog.content}
+            publishedDate={blog.publishedDate}
+            anonymous={blog.anonymous}
+            //anonymous={blog.anonymous}
+          />
+        ))}
             
         </div>
     );

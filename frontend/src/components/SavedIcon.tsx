@@ -1,6 +1,5 @@
 import axios from "axios"
 import { BACKEND_URL } from "../config"
-import { Link} from "react-router-dom"
 import { useUserInfo } from "../hooks/userInfo"
 import { useState } from "react"
 import { useEffect } from "react"

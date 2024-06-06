@@ -20,7 +20,7 @@ export const EditPost =()=>{
         </div>
     }
     return <div>
-    <Appbar></Appbar>
+    
     <BlogUpdate blog={blog}/>
     </div>
 }

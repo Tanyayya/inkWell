@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@syncfusion/ej2-react-richtexteditor": "^25.2.7",
     "@tanyashukla/blog-common": "^1.0.0",
     "@types/jwt-decode": "^3.1.0",
     "axios": "^1.6.8",
@@ -20,6 +21,7 @@
     "react": "^18.3.1",
     "react-admin": "^4.16.18",
     "react-dom": "^18.3.1",
+    "react-draft-wysiwyg": "^1.15.0",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.23.0"
   },
@@ -27,6 +29,7 @@
     "@types/dateformat": "^5.0.2",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/react-draft-wysiwyg": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",

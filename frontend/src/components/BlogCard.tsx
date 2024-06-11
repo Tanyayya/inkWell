@@ -42,8 +42,7 @@ export const BlogCard = ({
         <div className="text-xl font-semibold pt-2">
             {title}
         </div>
-        <div className="text-md font-thin">
-            {content.slice(0,100)+"..."}
+         <div className="text-md font-thin" dangerouslySetInnerHTML={{__html:content.slice(0,100)+"..."}}>
         </div>
         
         <div className="flex justify-between text-slate-500 text-sm font-thin pt-4">

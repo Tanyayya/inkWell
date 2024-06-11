@@ -48,6 +48,8 @@ const BlogPaginatedItems = () => {
 
  
   const Items: React.FC<{ blogItems: Blog[] }>  = ({ blogItems }) => {
+   
+
     return (
       <>
         {blogItems.map((blog) => (

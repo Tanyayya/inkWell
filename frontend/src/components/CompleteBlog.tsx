@@ -19,7 +19,7 @@ export const CompleteBlog = ({ blog }: { blog: Blogs }) => {
   const userId = payload.id;
 
   const name = blog.anonymous ? "Anonymous" : blog.author.name;
-
+  const words=blog.content.split(" ");
   return (
     <div className="">
       <Appbar />
@@ -53,7 +53,7 @@ export const CompleteBlog = ({ blog }: { blog: Blogs }) => {
                 </div>
                 <div className="flex text-slate-500 pt-4">
                   <div className="flex justify-center flex-col">
-                    {`${Math.ceil(blog.content.length / 100)} min read`}
+                    {`${Math.ceil(words.length/ 200)} min read`}
                   </div>
                   <div className="flex justify-center flex-col pl-2">
                     <Circle></Circle>
@@ -62,7 +62,7 @@ export const CompleteBlog = ({ blog }: { blog: Blogs }) => {
                     {dateFormat(blog.publishedDate, "mmmm dS, yyyy")}
                   </div>
                 </div>
-                <div className="pt-4">{blog.content}</div>
+                <div className="pt-4" dangerouslySetInnerHTML={{__html:blog.content}}></div>
               </div>
             </div>
           </div>

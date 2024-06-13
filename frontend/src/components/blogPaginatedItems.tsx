@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Appbar } from "../components/Appbar";
 import { BlogCard } from "../components/BlogCard";
-import { useBlogs } from "../hooks";
+
 import { Skeleton } from "../components/Skeleton";
 import ReactPaginate from 'react-paginate';
 
@@ -19,16 +19,22 @@ interface Blog {
     anonymous:boolean
   }
 
-  
+  interface BlogPaginatedItemsProps {
+    loading: boolean;
+    blogs: Blog[];
+  }
   
   // Define the props for PaginatedItems component
   interface PaginatedItemsProps {
     itemsPerPage: number;
   }
 
-const BlogPaginatedItems = () => {
+export const BlogPaginatedItems :React.FC<BlogPaginatedItemsProps>=({
+  loading,
+  blogs
+}) => {
     
-  const { loading, blogs } = useBlogs();
+ 
   
 
   if (loading) {

@@ -38,7 +38,8 @@ export const CompleteBlog = ({ blog }: { blog: Blogs }) => {
             </Link>
           </div>
           <div className="flex justify-center items-center">
-            <div className="px-10 p-12">
+          
+          <div className="px-10 py-12 overflow-hidden">
               <div className="">
                 <div className="text-5xl font-extrabold">{blog.title}</div>
                 <div className="">
@@ -62,7 +63,10 @@ export const CompleteBlog = ({ blog }: { blog: Blogs }) => {
                     {dateFormat(blog.publishedDate, "mmmm dS, yyyy")}
                   </div>
                 </div>
-                <div className="pt-4" dangerouslySetInnerHTML={{__html:blog.content}}></div>
+                <div className="pt-4 overflow-hidden">
+  <div dangerouslySetInnerHTML={{__html: blog.content}}></div>
+</div>
+
               </div>
             </div>
           </div>

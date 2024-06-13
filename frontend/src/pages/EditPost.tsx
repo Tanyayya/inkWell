@@ -4,6 +4,7 @@ import { Appbar } from "../components/Appbar"
 import { useParams } from "react-router-dom";
 import { useBlog } from "../hooks"
 import { BlogUpdate } from "../components/BlogUpdate";
+import { Loader } from "../components/Loader";
 
 export const EditPost =()=>{
     const {id} =useParams();
@@ -16,7 +17,7 @@ export const EditPost =()=>{
     {
         return <div>
             <Appbar></Appbar>
-            loading...
+            <Loader message="Loading Editor"/>
         </div>
     }
     return <div>

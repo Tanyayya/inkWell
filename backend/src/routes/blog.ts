@@ -19,13 +19,15 @@ export const blogRouter = new Hono<{
 }
 }>();
 
+
+
  blogRouter.use('/*', async (c, next) => {
   const authHeader = c.req.header("authorization") || "";
-  console.log(authHeader)
+  
   try {
       const user = await verify(authHeader, c.env.JWT_SECRET);
-      if (user) {
-          c.set("userId", user.id);
+      if (user ) {
+          c.set("userId", user.id );
           c.set("userName",user.name)
           await next();
       } else {
@@ -120,7 +122,47 @@ export const blogRouter = new Hono<{
     }
 });
 
-  
+blogRouter.get('/drafts', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+    
+    
+
+    try {
+        const blogs = await prisma.post.findMany({
+            where:{
+                authorId:c.get("userId"),
+                published:false
+            },
+            select: {
+                content: true,
+                title: true,
+                id: true,
+                published:true,
+                publishedDate: true,
+                anonymous: true,
+                author: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        });
+
+        console.log("Fetched blogs for /drafts:", blogs);
+
+        if (blogs.length === 0) {
+            console.log("No drafts found");
+            return c.json({ message: "No drafts found" });
+        }
+
+        return c.json({ blogs });
+    } catch (error) {
+        console.error("Error fetching blogs for /drafts:", error);
+        return c.json({ error: "An error occurred while fetching drafts" }, 500);
+    }
+  })
   blogRouter.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -129,6 +171,9 @@ export const blogRouter = new Hono<{
     
 
     const blogs=await prisma.post.findMany({
+        where:{
+            published:true
+        },
       select:{
         content:true,
         title:true,
@@ -306,37 +351,7 @@ blogRouter.post('/saved', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-    // const  userId  = c.get("userId");
-    // if (!userId) {
-    //      c.status(400)
-    //     return c.json({ error: 'User ID is required' });
-    // }
-
-    // try {
-    //   // Fetch the user
-    //   const user = await prisma.user.findUnique({
-    //     where: { id: userId },
-    //     select: { saved: true },
-    //   });
-      
-  
-    //   if (!user) {
-    //      c.status(404)
-    //     return c.json({ error: 'User not found' });
-    //   }
-      
-    //   // Fetch the posts based on the user's saved post IDs
-    //   const posts = await prisma.post.findMany({
-    //     where: { id: { in: user.saved } },
-    //   });
-  
-    //  return c.json(posts);
-      
-    // } catch (error) {
-    //   console.error(error);
-    //   c.status(500)
-    //   c.json({ error: 'Internal server error' });
-    // }
+    
     const body= await c.req.json()
     const response=await prisma.post.findMany({
         where:{
@@ -360,4 +375,5 @@ blogRouter.post('/saved', async (c) => {
     })
     return c.json({ response });
   });
-  
+
+ 

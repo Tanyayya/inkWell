@@ -5,13 +5,16 @@ import { Avatar } from "../components/BlogCard"
 import { useUserInfo } from "../hooks/userInfo"
 import { useState } from "react";
 import { SavedPosts } from "./SavedPosts";
-
+import { Loader } from "../components/Loader";
 export const Profile=()=>{
     const {user}=useUserInfo();
     const [about, setAbout] = useState(false);
     const [home,setHome]=useState(true);
     if (!user) {
-        return <div>Loading...</div>;
+        return <div>
+            <Appbar></Appbar>
+            <Loader message="Loading your profile"/>
+        </div>
     }
     return <div>
        <Appbar></Appbar>

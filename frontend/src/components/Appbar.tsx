@@ -59,11 +59,15 @@ function Dropdown({ id, size,name }:DropdownProps) {
                     </li>
                     </Link>
                    
+                    
                     <li>
                         <a href="/signin" onClick={()=>
                             localStorage.clear()
                             
                             } className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Signout</a>
+                    </li>
+                    <li>
+                        <a href="/drafts" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Drafts</a>
                     </li>
                 </ul >
             </div>

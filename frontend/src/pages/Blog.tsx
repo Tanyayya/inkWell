@@ -2,7 +2,7 @@ import { useBlog } from "../hooks"
 import { useParams } from "react-router-dom";
 import { CompleteBlog } from "../components/CompleteBlog";
 import { Appbar } from "../components/Appbar";
-
+import { Loader } from "../components/Loader";
 
 
 export const Blog = () =>{
@@ -16,7 +16,7 @@ export const Blog = () =>{
     {
         return <div>
             <Appbar></Appbar>
-            loading...
+            <Loader message="Loading Blog"/>
         </div>
     }
     return <div>

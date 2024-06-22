@@ -12,12 +12,12 @@ export const Profile=()=>{
     const [home,setHome]=useState(true);
     if (!user) {
         return <div>
-            <Appbar></Appbar>
+           
             <Loader message="Loading your profile"/>
         </div>
     }
     return <div>
-       <Appbar></Appbar>
+     
        <div className="max-w-screen-xl flex p-6 mx-auto  flex-wrap">
        <Avatar size="big" name={user.name}></Avatar>
         <div className="p-2 text-xl font-semibold ">{user.name}</div>

@@ -2,7 +2,6 @@ import  { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { PostEditor } from "../components/PostEditor";
-import { Appbar } from "../components/Appbar";
 import { BACKEND_URL } from "../config";
 
 export const Publish = () => {
@@ -48,7 +47,7 @@ export const Publish = () => {
 
   return (
     <div>
-      <Appbar />
+     
       <PostEditor
         handleAnonymousChange={handleAnonymousChange}
         handlePublishedChange={handlePublishedChange}

@@ -1,4 +1,4 @@
-import { Appbar } from "../components/Appbar";
+
 import { Loader } from "../components/Loader";
 import { useUserInfo } from "../hooks/userInfo";
 
@@ -8,7 +8,7 @@ export const UserPage = () => {
     if (loading) {
         return (
             <div>
-                <Appbar />
+               
                 <Loader message="Loading Author Details" />
             </div>
         );
@@ -17,7 +17,7 @@ export const UserPage = () => {
     if (error) {
         return (
             <div>
-                <Appbar />
+                
                 <p>{error}</p>
             </div>
         );
@@ -25,7 +25,7 @@ export const UserPage = () => {
 
     return (
         <div>
-            <Appbar />
+           
             <div>
                 {/* Render user details here */}
                 {user && (

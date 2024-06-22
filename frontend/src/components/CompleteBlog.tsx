@@ -1,4 +1,4 @@
-import { Appbar } from "./Appbar";
+
 import { Blogs } from "../hooks";
 import { Avatar, Circle } from "./BlogCard";
 import dateFormat from 'dateformat';
@@ -22,7 +22,7 @@ export const CompleteBlog = ({ blog }: { blog: Blogs }) => {
   const words=blog.content.split(" ");
   return (
     <div className="">
-      <Appbar />
+     
       <div className="flex justify-center flex-grow items-center p-8 m-auto">
         <div className="flex justify-center flex-col max-w-[800px]  bg-slate-100 p-2">
           <div className="p-8">

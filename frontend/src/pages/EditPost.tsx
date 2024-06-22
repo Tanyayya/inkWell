@@ -1,5 +1,4 @@
 
-import { Appbar } from "../components/Appbar"
 
 import { useParams } from "react-router-dom";
 import { useBlog } from "../hooks"
@@ -16,7 +15,7 @@ export const EditPost =()=>{
     if(loading||!blog)
     {
         return <div>
-            <Appbar></Appbar>
+            
             <Loader message="Loading Editor"/>
         </div>
     }

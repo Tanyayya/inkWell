@@ -8,6 +8,7 @@ import { AuthorPage } from './pages/AuthorPage'
 import { EditPost } from './pages/EditPost'
 import { Profile } from './pages/Profile'
 import { Drafts } from './pages/Drafts'
+import { Appbar } from './components/Appbar'
 
 
 
@@ -16,6 +17,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
+      <Appbar></Appbar>
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />

@@ -3,7 +3,6 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { Blog } from "../hooks";
-import { Appbar } from "./Appbar";
 import { PostEditor } from "./PostEditor";
 import 'react-quill/dist/quill.snow.css';
 
@@ -56,7 +55,7 @@ export const BlogUpdate = ({ blog }: { blog: Blog }) => {
   }, []);
   return (
     <div>
-        <Appbar></Appbar>
+        
         <PostEditor
         handleAnonymousChange={handleAnonymousChange}
         handlePublishedChange={handlePublishedChange}

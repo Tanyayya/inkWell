@@ -1,15 +1,14 @@
 import axios from "axios"
 import { BACKEND_URL } from "../config"
-import { useUserInfo } from "../hooks/userInfo"
 import { useState } from "react"
 import { useEffect } from "react"
 
 export interface User{
     saved:string[]
 }
-export const SavedIcon=({id}:{id:string})=>{
-    const { user } = useUserInfo() as { user: User | null };
-    const [save, setSave] = useState<boolean>(false);
+export const SavedIcon=({ id, user, saved }: { id: string, user: User | null, saved: boolean })=>{
+   
+    const [save, setSave] = useState<boolean>(saved)
 
     useEffect(() => {
         if (user) {

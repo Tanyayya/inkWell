@@ -10,6 +10,7 @@ export const userRouter = new Hono<{
     JWT_SECRET:string
 	}
 }>();
+
   
 userRouter.post('/signup', async (c) => {
   const prisma = new PrismaClient({
@@ -110,8 +111,14 @@ return c.json({
     }).$extends(withAccelerate())
   
     const token =  c.req.header("authorization");
+    if (!token) {
+      return c.json({
+        error: "Authorization header is missing",
+      }, 401);
+    }
+  
     const {header,payload} = decode(token||"");
-   const userId=payload.id;
+   const userId=payload.id as string;
     const response=await prisma.user.findUnique({
         where:{
             id:userId
@@ -142,7 +149,7 @@ return c.json({
 
       const token =  c.req.header("authorization");
     const {header,payload} = decode(token||"");
-   const userId=payload.id;
+   const userId=payload.id  as string;
       const body = await c.req.json();
 
       // Fetch the author ID based on the provided author name, or set it to null if anonymous
@@ -170,3 +177,65 @@ return c.json({
       });
   }
 });
+
+userRouter.get('/:id', async (c) => {
+  const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
+  
+  
+  const id =  c.req.param("id");
+  const response=await prisma.user.findUnique({
+      where:{
+          id:id
+      },
+      select:{
+       
+        id:true,
+        name:true,
+        posts:true,
+        about:true,
+        
+        
+      }
+  });
+
+  return c.json({
+    response
+  })
+})
+
+userRouter.get('/blogs/:id', async (c) => {
+  const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
+  
+  const id =  c.req.param("id");
+
+  const blogs=await prisma.post.findMany({
+      where:{
+          published:false,
+          authorId:id
+      },
+    select:{
+      content:true,
+      title:true,
+      id:true,
+      publishedDate:true,
+      anonymous:true,
+      author:{
+        select:{
+          name:true,
+          id:true
+        }
+      }
+    }
+  });
+    
+  
+
+  return c.json({
+    blogs
+  })
+})
+

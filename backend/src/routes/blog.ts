@@ -21,28 +21,29 @@ export const blogRouter = new Hono<{
 
 
 
- blogRouter.use('/*', async (c, next) => {
-  const authHeader = c.req.header("authorization") || "";
-  
-  try {
+blogRouter.use('/*', async (c, next) => {
+    const authHeader = c.req.header("authorization")||"";
+   
+    
+    try {
       const user = await verify(authHeader, c.env.JWT_SECRET);
-      if (user ) {
-          c.set("userId", user.id );
-          c.set("userName",user.name)
-          await next();
+      if (user) {
+        c.set("userId", user.id as string);
+        c.set("userName", user.name as string);
+        await next();
       } else {
-          c.status(403);
-          return c.json({
-              message: "You are not logged in"
-          })
+        c.status(403);
+        return c.json({
+          message: "You are not logged in"
+        });
       }
-  } catch(e) {
+    } catch (e) {
       c.status(403);
       return c.json({
-          message: "You are not logged in"
-      })
-  }
-})
+        message: "You are not logged in"
+      });
+    }
+  });
   
   blogRouter.post('/', async (c) => {
     
@@ -182,7 +183,8 @@ blogRouter.get('/drafts', async (c) => {
         anonymous:true,
         author:{
           select:{
-            name:true
+            name:true,
+            id:true
           }
         }
       }
@@ -309,43 +311,8 @@ const userId=c.get("userId")
 });
 
 
-blogRouter.post('/unsave', async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate())
 
-const body = await c.req.json();
-const userId=c.get("userId")
 
-  try {
-      const user = await prisma.user.findUnique({
-          where: { id: userId }
-      });
-
-      if (!user) {
-           c.status(404)
-           return c.json({ error: 'User not found' });
-      }
-
-      if (user.saved.includes(body.id)) {
-          await prisma.user.update({
-              where: { id: userId },
-              data: {
-                  saved: {
-                      set: user.saved.filter(id => id !== body.id)
-                  }
-              }
-          });
-      }
-
-       c.status(200)
-       return c.json({ message: 'Post unsaved successfully' });
-  } catch (error) {
-      console.error('Error unsaving post:', error);
-       c.status(500)
-       return c.json({ error: 'Internal Server Error' });
-  }
-});
 
 blogRouter.post('/saved', async (c) => {
     const prisma = new PrismaClient({
@@ -375,5 +342,8 @@ blogRouter.post('/saved', async (c) => {
     })
     return c.json({ response });
   });
+
+
+  
 
  

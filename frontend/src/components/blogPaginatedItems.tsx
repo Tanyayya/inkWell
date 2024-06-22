@@ -14,7 +14,7 @@ interface Blog {
     author: {
 
       name: string | null;
-      
+      id:string
     };
     anonymous:boolean
   }
@@ -40,7 +40,7 @@ export const BlogPaginatedItems :React.FC<BlogPaginatedItemsProps>=({
   if (loading) {
     return (
       <div>
-        <Appbar />
+       
         <div className="flex justify-center flex-col p-8">
           <Skeleton />
           <Skeleton />
@@ -63,6 +63,7 @@ export const BlogPaginatedItems :React.FC<BlogPaginatedItemsProps>=({
             key={blog.id} // Add a key prop for each item in the list
             id={blog.id}
             authorName={blog.author.name || "Anonymous"}
+            authorId={blog.author.id}
             title={blog.title}
             content={blog.content}
             publishedDate={blog.publishedDate}
@@ -89,7 +90,7 @@ export const BlogPaginatedItems :React.FC<BlogPaginatedItemsProps>=({
 
     return (
       <div>
-        <Appbar />
+       
         <div className="flex justify-center flex-col items-center">
           <Items blogItems={blogItems} />
           <ReactPaginate className="  max-w-screen-md justify-around text-slate-500 p-4 font-bold  flex pb-4 w-screen cursor-pointer"

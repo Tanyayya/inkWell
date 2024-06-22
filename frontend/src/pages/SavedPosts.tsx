@@ -12,6 +12,7 @@ interface Post {
     author: {
 
       name: string | null;
+      id:string
     };
     anonymous:boolean
 }
@@ -40,7 +41,7 @@ interface Post {
         fetchPostData();
                     
     },[saved])
-
+  
     return (
         <div>
            
@@ -53,6 +54,7 @@ interface Post {
             content={blog.content}
             publishedDate={blog.publishedDate}
             anonymous={blog.anonymous}
+            authorId={blog.author.id}
             //anonymous={blog.anonymous}
           />
         ))}

@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { BACKEND_URL } from "../config"
 import axios  from "axios"
-
+import { useUserInfo } from "../hooks/userInfo"
 
 export interface AboutInfo{
-    about:string
+    about:string,
+    id:string
 }
 export const About=({aboutInfo}:{aboutInfo:AboutInfo})=>{
-    
+    const {user}=useUserInfo();
     const [edit,setEdit]=useState(false);
     const [about,setabout]=useState(aboutInfo.about)
    
@@ -16,7 +17,7 @@ export const About=({aboutInfo}:{aboutInfo:AboutInfo})=>{
         <div className="text-center bg-slate-100  p-4 border border-slate-200 pb-4 w-screen max-w-screen-sm ">
         {about}
         </div>
-        <button type="button" className="p-4 m-4 text-gray-900  bg-slate-200 hover:text-white border border-gray-800 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={()=>{setEdit(true)}}> Edit personal Info</button>
+        {aboutInfo.id==user?.id?<button type="button" className="p-4 m-4 text-gray-900  bg-slate-200 hover:text-white border border-gray-800 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={()=>{setEdit(true)}}> Edit personal Info</button>:null}
         </div>
        
         <div className={`${!edit?'hidden':'block'} flex justify-center flex-col p-5 items-center`} >

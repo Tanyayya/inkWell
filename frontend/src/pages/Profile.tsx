@@ -1,11 +1,12 @@
 
 import { About } from "../components/About";
-import { Appbar } from "../components/Appbar";
 import { Avatar } from "../components/BlogCard"
 import { useUserInfo } from "../hooks/userInfo"
 import { useState } from "react";
 import { SavedPosts } from "./SavedPosts";
 import { Loader } from "../components/Loader";
+
+
 export const Profile=()=>{
     const {user}=useUserInfo();
     const [about, setAbout] = useState(false);

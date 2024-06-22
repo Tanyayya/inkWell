@@ -5,7 +5,7 @@ import { Loader} from "../components/Loader";
 import { Author } from "../components/Author";
 export const AuthorPage=() =>{
     const {id}=useParams();
-    const {loading,user,error}=useAuthorInfo({
+    const {loading,user}=useAuthorInfo({
         id: id||""
     });
     if(loading||!user)

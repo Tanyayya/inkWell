@@ -48,7 +48,7 @@ export const useUserInfo = () => {
 export const useAuthorInfo =({id}:{id:string}) =>{
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    
 
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/vi/user/${id}`, {
@@ -60,10 +60,7 @@ export const useAuthorInfo =({id}:{id:string}) =>{
             const userData = response.data.response;
             setUser(userData);
         })
-        .catch(error => {
-            console.error("Error fetching user data:", error);
-            setError("Error fetching user data");
-        })
+        
         .finally(() => {
             setLoading(false);
         });
@@ -73,6 +70,6 @@ export const useAuthorInfo =({id}:{id:string}) =>{
 
         loading,
         user,
-        error
+       
     }
 }

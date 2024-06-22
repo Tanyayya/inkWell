@@ -29,7 +29,7 @@ export const BlogCard = ({
     const name=(!anonymous)?authorName:"Anonymous"
    
     const { user } = useUserInfo() as { user: User | null };
-    const [save, setSave] = useState<boolean>(() => {
+    const [save] = useState<boolean>(() => {
         return user ? user.saved.includes(id) : false;
       });
       const navigate = useNavigate();

@@ -17,7 +17,7 @@ import { useState } from "react";
             InkWell
         </div>
         </Link>
-        
+        {name!=""?
         <div>
             <Link to={"/publish"}>
             <button type="button" className="mr-6 text-gray-900  bg-slate-200 hover:text-white border border-gray-800 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ">New Post</button>
@@ -28,7 +28,7 @@ import { useState } from "react";
                 
             
            
-            </div>
+            </div>:null}
 </div>
 }
 
@@ -50,7 +50,7 @@ function Dropdown({ id, size,name }:DropdownProps) {
     return (
         <div className="relative inline-block">
             <Avatar id={id} size={size} name={name} onClick={toggleDropdown} />
-            {name==""?
+           
             <div className={`absolute right-0 mt-2 z-10 ${dropdownVisible ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700`}>
                 <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby={id}>
                     <Link to={"/me"}>
@@ -71,7 +71,7 @@ function Dropdown({ id, size,name }:DropdownProps) {
                         <a href="/drafts" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Drafts</a>
                     </li>
                 </ul >
-            </div>:null}
+            </div>
         </div>
     );
 }

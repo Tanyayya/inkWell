@@ -50,6 +50,7 @@ function Dropdown({ id, size,name }:DropdownProps) {
     return (
         <div className="relative inline-block">
             <Avatar id={id} size={size} name={name} onClick={toggleDropdown} />
+            {name==""?
             <div className={`absolute right-0 mt-2 z-10 ${dropdownVisible ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700`}>
                 <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby={id}>
                     <Link to={"/me"}>
@@ -70,7 +71,7 @@ function Dropdown({ id, size,name }:DropdownProps) {
                         <a href="/drafts" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Drafts</a>
                     </li>
                 </ul >
-            </div>
+            </div>:null}
         </div>
     );
 }

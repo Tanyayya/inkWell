@@ -2,6 +2,7 @@ import { useState,useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { BlogCard } from "../components/BlogCard";
+import { Appbar } from "../components/Appbar";
 
 export type Saved =string;
 interface Post {
@@ -44,7 +45,7 @@ interface Post {
   
     return (
         <div>
-           
+           <Appbar></Appbar>
            {posts.map((blog) => (
           <BlogCard
           key={blog.id}// Add a key prop for each item in the list

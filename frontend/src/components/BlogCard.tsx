@@ -27,13 +27,16 @@ export const BlogCard = ({
     anonymous
 }:BlogCardProps) =>{
     const name=(!anonymous)?authorName:"Anonymous"
-   
+    const words=content.split(" ");
     const { user } = useUserInfo() as { user: User | null };
     const [save] = useState<boolean>(() => {
         return user ? user.saved.includes(id) : false;
       });
       const navigate = useNavigate();
-     console.log(authorId)
+       function author(e:React.MouseEvent) {
+        e.stopPropagation();
+                    navigate(`/user/${authorId}`);
+    }
 
     
     return <div  className="flex justify-center  ">
@@ -41,14 +44,12 @@ export const BlogCard = ({
         <div className="flex">
             <div className="">
             <Avatar 
-             onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/user/${authorId}`);
-              }}
+             onClick={author}
             name={name}></Avatar>
             </div>
             
-            <div className="flex justify-center flex-col font-extralight text-sm pl-2"> {name} </div>
+            <div  onClick={author} className="flex justify-center flex-col font-extralight text-sm pl-2"> {name} </div>
+            
             <div className="flex justify-center flex-col pl-2 "> <Circle></Circle></div>
             <div className="flex justify-center flex-col pl-2 font-thin text-slate-500 text-sm">
             {dateFormat(publishedDate, "mmmm dS, yyyy")}
@@ -62,7 +63,7 @@ export const BlogCard = ({
         </div>
         
         <div className="flex justify-between text-slate-500 text-sm font-thin pt-4">
-            {`${Math.ceil(content.length/100)} min read`}
+            {`${Math.ceil(words.length/100)} min read`}
             <SavedIcon user={user} saved={save} id={id}></SavedIcon>
         </div>
         

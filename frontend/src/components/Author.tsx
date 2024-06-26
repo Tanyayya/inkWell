@@ -1,6 +1,5 @@
 
 import { About } from "../components/About";
-import { Appbar } from "../components/Appbar";
 import { Avatar } from "../components/BlogCard"
 import { useState } from "react";
 import axios from "axios";
@@ -12,7 +11,8 @@ export interface User{
    id:string,
     name:string,
     about:string,
-    posts:[]
+    posts:[],
+    followers:[]
 }
 
 export const Author=({ user }: { user: User })=>{
@@ -23,10 +23,14 @@ export const Author=({ user }: { user: User })=>{
     
     
     return <div>
-       <Appbar></Appbar>
+       
        <div className="max-w-screen-xl flex p-6 mx-auto  flex-wrap">
        <Avatar size="big" name={user.name}></Avatar>
-        <div className="p-2 text-xl font-semibold ">{user.name}</div>
+       <div className="px-3  ">
+       <div className=" text-xl font-semibold ">{user.name}</div>
+       <div className="text-slate-500">{user.followers.length} Followers</div>
+       </div>
+       
        </div>
         
         <nav className="bg-gray-50 p-2">

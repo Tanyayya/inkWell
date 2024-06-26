@@ -130,7 +130,9 @@ return c.json({
           password:true,
           about:true,
           posts:true,
-          saved:true
+          saved:true,
+          followers:true
+
           
           }
         })
@@ -161,7 +163,8 @@ return c.json({
           },
           data: {
               about:body.about,
-              saved:body.saved
+              saved:body.saved,
+              followers:body.followers,
                // Use the author ID if found, or null if anonymous
           },
       });
@@ -177,6 +180,104 @@ return c.json({
       });
   }
 });
+
+userRouter.put("/follow",async (c)=>{
+  try {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+   
+    const body = await c.req.json();
+    const id=body.id;
+    const followerId=body.followerId;
+    // Fetch the author ID based on the provided author name, or set it to null if anonymous
+    if (!id || !followerId) {
+       c.status(400)
+       return c.json({ error: 'Invalid input' });
+    }
+    
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) {
+       c.status(404)
+       return c.json({ error: 'User not found' });
+    }
+    const isAlreadyFollowing = user.followers.some(fid => fid === followerId);
+    if (isAlreadyFollowing) {
+      return c.json({ message: 'Already following this user' });
+    }
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: {
+        followers: {
+          push: followerId
+        }
+      }
+    });
+
+    return c.json({
+        updatedUser,
+    });
+} catch (e) {
+    console.error(e);
+    c.status(500);
+    return c.json({
+        error: "Internal Server Error",
+    });
+}
+});
+
+userRouter.put("/unfollow", async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const body = await c.req.json();
+    const id = body.id;
+    const followerId = body.followerId;
+
+    // Check if id or followerId is missing
+    if (!id || !followerId) {
+      c.status(400);
+      return c.json({ error: 'Invalid input' });
+    }
+
+    // Fetch the user and check if it exists
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      c.status(404);
+      return c.json({ error: 'User not found' });
+    }
+
+    // Check if followerId is in the followers array
+    const isFollowing = user.followers.some(fid => fid === followerId);
+    if (!isFollowing) {
+      return c.json({ message: 'User is not currently being followed' });
+    }
+
+    // Update the user by removing the followerId from the followers array
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: {
+        followers: {
+          set: user.followers.filter(fid => fid !== followerId)
+        }
+      }
+    });
+
+    return c.json({
+      updatedUser,
+    });
+  } catch (e) {
+    console.error('Error:', e);
+    c.status(500);
+    return c.json({
+      error: 'Internal Server Error',
+    });
+  } 
+});
+
 
 userRouter.get('/:id', async (c) => {
   const prisma = new PrismaClient({
@@ -195,6 +296,7 @@ userRouter.get('/:id', async (c) => {
         name:true,
         posts:true,
         about:true,
+        followers:true
         
         
       }
@@ -238,4 +340,5 @@ userRouter.get('/blogs/:id', async (c) => {
     blogs
   })
 })
+
 

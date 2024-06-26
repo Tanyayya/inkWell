@@ -5,6 +5,7 @@ import { useUserInfo } from "../hooks/userInfo"
 import { useState } from "react";
 import { SavedPosts } from "./SavedPosts";
 import { Loader } from "../components/Loader";
+import { Appbar } from "../components/Appbar";
 
 
 export const Profile=()=>{
@@ -13,12 +14,12 @@ export const Profile=()=>{
     const [home,setHome]=useState(true);
     if (!user) {
         return <div>
-           
+           <Appbar></Appbar>
             <Loader message="Loading your profile"/>
         </div>
     }
     return <div>
-     
+         <Appbar></Appbar>
        <div className="max-w-screen-xl flex p-6 mx-auto  flex-wrap">
        <Avatar size="big" name={user.name}></Avatar>
         <div className="p-2 text-xl font-semibold ">{user.name}</div>

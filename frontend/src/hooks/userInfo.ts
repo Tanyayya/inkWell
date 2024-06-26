@@ -10,6 +10,7 @@ export interface User {
     about:string;
     posts:[]
     saved:[]
+    followers:[]
 }
 
 export const useUserInfo = () => {

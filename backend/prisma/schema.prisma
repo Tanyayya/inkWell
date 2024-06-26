@@ -22,6 +22,7 @@ model User {
   about String?
   posts    Post[]
   saved  String[]
+  followers String[]
 }
 
 model Post {
@@ -33,5 +34,6 @@ model Post {
   authorId  String
   publishedDate DateTime @default(now()) @db.Date
   anonymous Boolean @default(false)
+  likes String[]
  
 }

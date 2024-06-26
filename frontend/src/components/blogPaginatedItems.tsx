@@ -40,7 +40,7 @@ export const BlogPaginatedItems :React.FC<BlogPaginatedItemsProps>=({
     return (
       <div>
        
-        <div className="flex justify-center flex-col p-8">
+        <div className="flex justify-center flex-col items-center  " >
           <Skeleton />
           <Skeleton />
           <Skeleton />

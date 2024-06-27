@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import  { useState,useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import dateFormat from 'dateformat';
@@ -6,6 +6,8 @@ import { decode } from 'hono/jwt';
 import { Blogs } from '../hooks';
 import { Avatar, Circle } from './BlogCard';
 import { BACKEND_URL } from '../config';
+import { UserContext } from '../pages/Blog';
+import { useContext } from 'react';
 
 export interface BlogID {
   title: string;
@@ -13,13 +15,30 @@ export interface BlogID {
   anonymous: boolean;
   id: string;
 }
+export interface User{
+  id:string
+  saved:string[],
+  following:string[]
+}
 
 export const CompleteBlog = ({ blog }: { blog: Blogs }) => {
+  const user = useContext(UserContext);
   const token = localStorage.getItem('token');
   const { payload } = decode(token || '');
   const userId = payload.id as string;
+  ;
+  
+  
+  const [follow, setFollow] = useState<boolean>(false)
+  
+  const initialFollowState = useMemo(() => {
+    return user && user.following ? user.following.includes(blog.author.id) : false;
+  }, [user, blog]);
 
-  const [follow, setFollow] = useState<boolean>(false); // State to track follow status
+  useEffect(() => {
+    setFollow(initialFollowState);
+  }, [initialFollowState]);
+  
   const name = blog.anonymous ? 'Anonymous' : blog.author.name;
   const words = blog.content.split(' ');
 

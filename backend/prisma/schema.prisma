@@ -23,6 +23,7 @@ model User {
   posts    Post[]
   saved  String[]
   followers String[]
+  following String[]
 }
 
 model Post {

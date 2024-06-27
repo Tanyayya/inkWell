@@ -14,7 +14,9 @@ export interface BlogCardProps {
     authorId:string
 }
 export interface User{
-    saved:string[]
+    id:string
+    saved:string[],
+    following:string[]
 }
 
 export const BlogCard = ({

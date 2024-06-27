@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
@@ -11,7 +11,9 @@ export interface User {
     posts:[]
     saved:[]
     followers:[]
+    following:[]
 }
+
 
 export const useUserInfo = () => {
     const [user, setUser] = useState<User | null>(null);

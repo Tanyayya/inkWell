@@ -131,7 +131,8 @@ return c.json({
           about:true,
           posts:true,
           saved:true,
-          followers:true
+          followers:true,
+          following:true
 
           
           }
@@ -198,7 +199,8 @@ userRouter.put("/follow",async (c)=>{
     }
     
     const user = await prisma.user.findUnique({ where: { id } });
-    if (!user) {
+    const follower = await prisma.user.findUnique({ where: { id: followerId } });
+    if (!user||!follower) {
        c.status(404)
        return c.json({ error: 'User not found' });
     }
@@ -214,9 +216,18 @@ userRouter.put("/follow",async (c)=>{
         }
       }
     });
+    const updatedFollower = await prisma.user.update({
+      where: { id: followerId },
+      data: {
+        following: {
+          push: id
+        }
+      }
+    });
 
     return c.json({
         updatedUser,
+        updatedFollower
     });
 } catch (e) {
     console.error(e);
@@ -231,7 +242,7 @@ userRouter.put("/unfollow", async (c) => {
   try {
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
+  }).$extends(withAccelerate());
 
     const body = await c.req.json();
     const id = body.id;
@@ -243,20 +254,22 @@ userRouter.put("/unfollow", async (c) => {
       return c.json({ error: 'Invalid input' });
     }
 
-    // Fetch the user and check if it exists
+    // Fetch both users and check if they exist
     const user = await prisma.user.findUnique({ where: { id } });
-    if (!user) {
+    const follower = await prisma.user.findUnique({ where: { id: followerId } });
+
+    if (!user || !follower) {
       c.status(404);
-      return c.json({ error: 'User not found' });
+      return c.json({ error: 'User(s) not found' });
     }
 
-    // Check if followerId is in the followers array
+    // Check if followerId is in the following array of user
     const isFollowing = user.followers.some(fid => fid === followerId);
     if (!isFollowing) {
       return c.json({ message: 'User is not currently being followed' });
     }
 
-    // Update the user by removing the followerId from the followers array
+    // Update the user by filtering out the followerId from the followers array
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
@@ -266,8 +279,19 @@ userRouter.put("/unfollow", async (c) => {
       }
     });
 
+    // Update the follower by filtering out the id from their following array
+    const updatedFollower = await prisma.user.update({
+      where: { id: followerId },
+      data: {
+        following: {
+          set: follower.following.filter(fid => fid !== id)
+        }
+      }
+    });
+
     return c.json({
       updatedUser,
+      updatedFollower,
     });
   } catch (e) {
     console.error('Error:', e);
@@ -277,6 +301,8 @@ userRouter.put("/unfollow", async (c) => {
     });
   } 
 });
+
+
 
 
 userRouter.get('/:id', async (c) => {

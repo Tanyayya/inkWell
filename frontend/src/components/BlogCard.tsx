@@ -4,6 +4,9 @@ import { SavedIcon } from "./SavedIcon"
 import { useUserInfo } from "../hooks/userInfo"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
+import axios from "axios"
+import { BACKEND_URL } from "../config"
+
 export interface BlogCardProps {
     authorName:string,
     title:string,
@@ -11,7 +14,8 @@ export interface BlogCardProps {
     publishedDate: string,
     id:string,
     anonymous:boolean,
-    authorId:string
+    authorId:string,
+    saved:boolean
 }
 export interface User{
     id:string
@@ -26,14 +30,36 @@ export const BlogCard = ({
     publishedDate,
     id,
     authorId,
-    anonymous
+    anonymous,
+    saved
 }:BlogCardProps) =>{
     const name=(!anonymous)?authorName:"Anonymous"
     const words=content.split(" ");
     const { user } = useUserInfo() as { user: User | null };
-    const [save] = useState<boolean>(() => {
-        return user ? user.saved.includes(id) : false;
-      });
+    async function fetchSavedStatus( postId: string): Promise<boolean> {
+        try {
+          const response = await axios.post(`${BACKEND_URL}/api/vi/blog/savedStatus`, { postId }, {
+            headers: {
+              
+              Authorization:localStorage.getItem("token")
+            }
+          });
+          return response.data.success;
+        } catch (error) {
+          console.error("Error fetching saved status:", error);
+          return false;
+        }
+      }
+      const [save, setSave] = useState<boolean>(saved);
+
+      
+        if (user) {
+          fetchSavedStatus(id)
+            .then(status => setSave(status))
+            .catch(error => console.error("Error fetching saved status:", error));
+            
+        }
+      
       const navigate = useNavigate();
        function author(e:React.MouseEvent) {
         e.stopPropagation();
@@ -66,7 +92,7 @@ export const BlogCard = ({
         
         <div className="flex justify-between text-slate-500 text-sm font-thin pt-4">
             {`${Math.ceil(words.length/100)} min read`}
-            <SavedIcon user={user} saved={save} id={id}></SavedIcon>
+            <SavedIcon saved={save} id={id}></SavedIcon>
         </div>
         
         </Link>

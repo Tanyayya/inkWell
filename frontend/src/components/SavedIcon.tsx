@@ -1,50 +1,68 @@
-import axios from "axios"
-import { BACKEND_URL } from "../config"
-import { useState } from "react"
-import { useEffect } from "react"
+import axios from "axios";
+import { BACKEND_URL } from "../config";
+import { useState, useEffect } from "react";
 
-export interface User{
-    saved:string[]
-}
-export const SavedIcon=({ id, user, saved }: { id: string, user: User | null, saved: boolean })=>{
-   
-    const [save, setSave] = useState<boolean>(saved)
 
-    useEffect(() => {
-        if (user) {
-            const isSaved = user.saved.includes(id);
-            setSave(isSaved);
-        }
-    }, [user, id]);
-    return <div>
-        {(save===false)?<img onClick={async(e)=>{
-            e.preventDefault();
-                await axios.post(`${BACKEND_URL}/api/vi/blog/save`,
-                {
-                    id,
 
-                   
-                },{
-                    headers:{
-                        Authorization:localStorage.getItem("token")
-                    }
-                });
-                setSave(true); 
-            }}src="/save.png" className="h-5 mr-2" alt="Flowbite Logo" />:
-            <img onClick={async(e)=>{
-                e.preventDefault();
-                await axios.post(`${BACKEND_URL}/api/vi/blog/unsave`,
-                {
-                    id,
+export const SavedIcon = ({ id,  saved }: { id: string, saved: boolean }) => {
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [currentSaved, setCurrentSaved] = useState<boolean>(saved);
 
-                   
-                },{
-                    headers:{
-                        Authorization:localStorage.getItem("token")
-                    }
-                });
-                setSave(false); 
-            }}src="/unsave.png" className="h-5 mr-2" alt="Flowbite Logo" />}
+  useEffect(() => {
+    setCurrentSaved(saved); // Initialize with the saved status from props
+  }, [saved]); // Update when 'saved' prop changes
 
+  const handleSave = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsSaving(true); // Set loading state
+    try {
+      await axios.post(`${BACKEND_URL}/api/vi/blog/save`, { postId: id }, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      });
+      setIsSaving(false); // Reset loading state
+      setCurrentSaved(true); // Update saved status locally
+    } catch (error) {
+      console.error("Error saving post:", error);
+      setIsSaving(false); // Reset loading state on error
+    }
+  };
+
+  const handleUnsave = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsSaving(true); // Set loading state
+    try {
+      await axios.post(`${BACKEND_URL}/api/vi/blog/unsave`, { postId: id }, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      });
+      setIsSaving(false); // Reset loading state
+      setCurrentSaved(false); // Update saved status locally
+    } catch (error) {
+      console.error("Error unsaving post:", error);
+      setIsSaving(false); // Reset loading state on error
+    }
+  };
+
+  return (
+    <div className="flex items-center">
+    {!currentSaved ? (
+      <img
+        onClick={handleSave}
+        src="/save.png"
+        className={`h-5 cursor-pointer ${isSaving ? "opacity-50" : ""}`}
+        alt="Save Icon"
+      />
+    ) : (
+      <img
+        onClick={handleUnsave}
+        src="/unsave.png"
+        className={`h-5 cursor-pointer ${isSaving ? "opacity-50" : ""}`}
+        alt="Unsave Icon"
+      />
+    )}
     </div>
-}
+  );
+};

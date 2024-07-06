@@ -186,7 +186,8 @@ blogRouter.get('/drafts', async (c) => {
             name:true,
             id:true
           }
-        }
+        },
+        savedBy:true
       }
     });
       
@@ -221,7 +222,8 @@ blogRouter.get('/drafts', async (c) => {
               name:true,
               about:true
             }
-          }
+          },
+          savedBy:true
         }
     });
 
@@ -232,118 +234,185 @@ blogRouter.get('/drafts', async (c) => {
 
 
   
-  blogRouter.post('/save', async (c) => {
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate())
-
-  const body = await c.req.json();
-  const userId=c.get("userId")
-
-  try {
-      const user = await prisma.user.findUnique({
-          where: { id: userId }
-      });
-
-      if (!user) {
-           c.status(404)
-          return c.json({ error: 'User not found' });
-      }
-      
-      if (!user.saved.includes(body.id)) {
-       // const updatedSaved = [...user.saved, id];
-          await prisma.user.update({
-              where: { id: userId },
-              data: {
-                  saved: {
-                      push: body.id
-                  }
-              }
-          });
-      }
-
-       c.status(200)
-      return c.json({ message: 'Post saved successfully' });
-  } catch (error) {
-      console.error('Error saving post:', error);
-     c.status(500)
-      return c.json({ error: 'Internal Server Error' });
-  }
-});
-
-
-blogRouter.post('/unsave', async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate())
-
-const body = await c.req.json();
-const userId=c.get("userId")
-
-  try {
-      const user = await prisma.user.findUnique({
-          where: { id: userId }
-      });
-
-      if (!user) {
-           c.status(404)
-          return c.json({ error: 'User not found' });
-      }
-
-      if (user.saved.includes(body.id)) {
-          await prisma.user.update({
-              where: { id: userId },
-              data: {
-                  saved: {
-                      set: user.saved.filter(id => id !== body.id)
-                  }
-              }
-          });
-      }
-
-       c.status(200)
-      return c.json({ message: 'Post unsaved successfully' });
-  } catch (error) {
-      console.error('Error unsaving post:', error);
-       c.status(500)
-      return c.json({ error: 'Internal Server Error' });
-  }
-});
-
-
-
-
-
-blogRouter.post('/saved', async (c) => {
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
-    
-    const body= await c.req.json()
-    const response=await prisma.post.findMany({
-        where:{
-            id:{
-               in:body.saved
-        }
-    },
-        select:{
-            content: true,
-            title: true,
-            id: true,
-            publishedDate: true,
-            anonymous: true,
-            author: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
-        }
-    })
-    return c.json({ response });
-  });
-
 
   
 
- 
+blogRouter.post("/save",async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    const userId=c.get("userId")
+    const body = await c.req.json();
+    const postId=body.postId;
+
+    try {
+        const res=await prisma.saved.create({
+          data: {
+            user: userId,
+            post: postId,
+          },
+        });
+        return Response.json(
+          {
+            res,
+            success: true,
+            data: "created",
+          },
+          {
+            status: 200,
+          }
+        );
+      } catch (error) {
+        console.log(error);
+        return Response.json(
+          {
+            success: false,
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+})
+
+blogRouter.post("/savedStatus",async (c) =>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    const userId=c.get("userId")
+    const body = await c.req.json();
+    const postId=body.postId;
+
+    try{
+        const savedstatus=await prisma.saved.findFirst({
+            where:
+            {
+                user:userId,
+                post:postId
+            }
+            
+        })
+        if(savedstatus===null)
+            {
+                return Response.json({
+                    success: false,
+                  });
+            }
+            return Response.json(
+                {
+                  savedstatus,
+                  success: true,
+                },
+                {
+                  status: 200,
+                }
+              );
+    }
+    catch(error){
+        return Response.json(
+            {
+              success: false,
+            },
+            {
+              status: 400,
+            }
+          );
+    }
+  })
+
+
+  
+blogRouter.post("/unsave",async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    const userId=c.get("userId")
+    const body = await c.req.json();
+    const postId=body.postId;
+
+    try {
+        const userSaved = await prisma.saved.findFirst({
+            where: {
+              user: userId,
+              post: postId,
+            },
+          });
+          if (userSaved) {
+            await prisma.saved.delete({
+              where: {
+                id: userSaved.id,
+              },
+            });
+            return Response.json(
+              {
+                success: true,
+                data: "deleted",
+              },
+              {
+                status: 200,
+              }
+            );
+          } else {
+            return Response.json(
+              {
+                status: false,
+              },
+              {
+                status: 400,
+              }
+            );
+          }
+        } catch (error) {
+          console.log(error);
+          return Response.json(
+            {
+              success: false,
+            },
+            {
+              status: 400,
+            }
+          );
+        
+      }
+})
+
+blogRouter.post("/saved",async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    const userId=c.get("userId")
+    
+
+    try {
+        const userSaved = await prisma.saved.findFirst({
+            where: {
+              user: userId,
+             
+            },
+            select:{
+                post:true
+            }
+          });
+          
+          return Response.json({
+            userSaved
+          })
+        } catch (error) {
+          console.log(error);
+          return Response.json(
+            {
+              success: false,
+            },
+            {
+              status: 400,
+            }
+          );
+        
+      }
+
+     
+})

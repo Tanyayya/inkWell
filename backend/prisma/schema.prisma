@@ -21,9 +21,10 @@ model User {
   password String
   about String?
   posts    Post[]
-  saved  String[]
+  saved    Saved[]
   followers String[]
   following String[]
+
 }
 
 model Post {
@@ -36,5 +37,14 @@ model Post {
   publishedDate DateTime @default(now()) @db.Date
   anonymous Boolean @default(false)
   likes String[]
+  savedBy    Saved[]
  
+}
+
+model Saved {
+  id        String   @id @default(uuid())
+  user      String
+  userId    User   @relation(fields: [user],references: [id])
+  post      String
+  postId    Post   @relation(fields: [post],references: [id])
 }

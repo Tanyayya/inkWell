@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react"
 import axios from "axios"
 import { BACKEND_URL } from "../config"
-
-
+import { useUserInfo } from "./userInfo"
+import { User } from "../components/BlogCard"
 export interface Blog {
     "content":string,
     "title":string,
@@ -13,6 +13,7 @@ export interface Blog {
         "name":string,
         "id":string,
     }
+    "savedBy":String[]
 }
 export interface Blogs {
     "content":string,
@@ -25,11 +26,12 @@ export interface Blogs {
         "id":string,
         "about":string
     }
+    "savedBy":String[]
 }
 export const useBlog =({id}:{id:string}) =>{
     const [loading, setLoading] = useState(true);
     const [blog, setBlog] = useState<Blogs>();
-
+    const { user } = useUserInfo() as { user: User | null };
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/vi/blog/${id}`, {
             headers: {
@@ -44,7 +46,8 @@ export const useBlog =({id}:{id:string}) =>{
                 id: responseData.id,
                 publishedDate:responseData.publishedDate,
                 anonymous:responseData.anonymous,
-                author : { id: responseData.author.id, name: responseData.author.name|| "Anonymous" ,about:responseData.author.about ||""}
+                author : { id: responseData.author.id, name: responseData.author.name|| "Anonymous" ,about:responseData.author.about ||""},
+                savedBy: responseData.savedBy.includes(user?.id)
                
             };
                 setBlog(blogData);

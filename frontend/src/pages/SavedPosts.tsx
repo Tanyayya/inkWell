@@ -1,52 +1,52 @@
-import { useState,useEffect } from "react";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
-import { BlogCard } from "../components/BlogCard";
+// import { useState,useEffect } from "react";
+// import axios from "axios";
+// import { BACKEND_URL } from "../config";
+// import { BlogCard } from "../components/BlogCard";
 
 
 export type Saved =string;
-interface Post {
-    id: string;
-    title: string;
-    content: string;
-    publishedDate:string;
-    author: {
+// interface Post {
+//     id: string;
+//     title: string;
+//     content: string;
+//     publishedDate:string;
+//     author: {
 
-      name: string | null;
-      id:string
-    };
-    anonymous:boolean
-}
+//       name: string | null;
+//       id:string
+//     };
+//     anonymous:boolean
+// }
 
  export const SavedPosts = ({ saved }: { saved: Saved[] }) => {
-    const [posts, setPosts] = useState<Post[]>([]);
+    // const [, setPosts] = useState<Post[]>([]);
     
    
-    useEffect(() => {
-        const fetchPostData = async () => {
-            try {
-                const response = await axios.post(`${BACKEND_URL}/api/vi/blog/saved`,
-                {
-                    saved
-                },{
-                    headers:{
-                        Authorization:localStorage.getItem("token")
-                    }
-                });
+    // useEffect(() => {
+    //     const fetchPostData = async () => {
+    //         try {
+    //             const response = await axios.post(`${BACKEND_URL}/api/vi/blog/saved`,
+    //             {
+    //                 saved
+    //             },{
+    //                 headers:{
+    //                     Authorization:localStorage.getItem("token")
+    //                 }
+    //             });
                
-                setPosts(response.data.response)            } catch (error) {
-                console.error('Error fetching post data:', error);
-            }
-        };
+    //             setPosts(response.data.response)            } catch (error) {
+    //             console.error('Error fetching post data:', error);
+    //         }
+    //     };
 
-        fetchPostData();
+    //     fetchPostData();
                     
-    },[saved])
-  
+    // },[saved])
+   console.log(saved)
     return (
         <div>
            
-           {posts.map((blog) => (
+           {/* {posts.map((blog) => (
           <BlogCard
           key={blog.id}// Add a key prop for each item in the list
             id={blog.id}
@@ -56,9 +56,10 @@ interface Post {
             publishedDate={blog.publishedDate}
             anonymous={blog.anonymous}
             authorId={blog.author.id}
+            
             //anonymous={blog.anonymous}
           />
-        ))}
+        ))} */}
             
         </div>
     );

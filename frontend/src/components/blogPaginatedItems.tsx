@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BlogCard } from "../components/BlogCard";
-
+import { User } from "../components/BlogCard";
+import { useUserInfo } from "../hooks/userInfo";
 import { Skeleton } from "../components/Skeleton";
 import ReactPaginate from 'react-paginate';
 
@@ -15,7 +16,8 @@ interface Blog {
       name: string | null;
       id:string
     };
-    anonymous:boolean
+    anonymous:boolean;
+    savedBy:String[]
   }
 
   interface BlogPaginatedItemsProps {
@@ -53,7 +55,7 @@ export const BlogPaginatedItems :React.FC<BlogPaginatedItemsProps>=({
 
  
   const Items: React.FC<{ blogItems: Blog[] }>  = ({ blogItems }) => {
-   
+    const { user } = useUserInfo() as { user: User | null };
 
     return (
       <>
@@ -67,6 +69,7 @@ export const BlogPaginatedItems :React.FC<BlogPaginatedItemsProps>=({
             content={blog.content}
             publishedDate={blog.publishedDate}
             anonymous={blog.anonymous}
+            saved={user ? blog.savedBy.includes(user.id) : false} 
             //anonymous={blog.anonymous}
           />
         ))}

@@ -8,7 +8,7 @@ import { AuthorPage } from './pages/AuthorPage'
 import { EditPost } from './pages/EditPost'
 import { Profile } from './pages/Profile'
 import { Drafts } from './pages/Drafts'
-
+import { RealTimePublish } from './pages/RealTimePublish'
 
 
 
@@ -32,7 +32,7 @@ function App() {
           <Route path="/editPost/:id" element={<EditPost/>}></Route>
           <Route path="/user/:id" element={<AuthorPage/>}></Route>
           <Route path='/drafts' element={<Drafts/>}></Route>
-          
+          <Route path="/collaborate/:id" element={<RealTimePublish/>}></Route>
         </Routes>
         
       </BrowserRouter>

@@ -24,6 +24,7 @@ model User {
   saved    Saved[]
   followers String[]
   following String[]
+  realTimePosts UserRealTimePosts[]
 
 }
 
@@ -47,4 +48,26 @@ model Saved {
   userId    User   @relation(fields: [user],references: [id])
   post      String
   postId    Post   @relation(fields: [post],references: [id])
+}
+
+model RealTimePost {
+  id            String            @id @default(uuid())
+  title         String
+  content       String
+  published     Boolean           @default(false)
+  publishedDate DateTime          @default(now()) @db.Date
+  anonymous     Boolean           @default(false)
+  likes         String[]
+  authors       UserRealTimePosts[]
+  
+}
+
+model UserRealTimePosts {
+  userId       String
+  realTimePostId String
+
+  user          User     @relation(fields: [userId], references: [id])
+  realTimePost  RealTimePost @relation(fields: [realTimePostId], references: [id])
+
+  @@id([userId, realTimePostId])
 }

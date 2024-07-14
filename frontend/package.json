@@ -24,7 +24,8 @@
     "react-draft-wysiwyg": "^1.15.0",
     "react-paginate": "^8.2.0",
     "react-quill": "^2.0.0",
-    "react-router-dom": "^6.23.0"
+    "react-router-dom": "^6.23.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/dateformat": "^5.0.2",

@@ -66,5 +66,6 @@ wss.on("connection", function connection(ws) {
     }
   });
 
-  ws.send("Connection done");
+  // ws.send("Connection done");
 });
+  

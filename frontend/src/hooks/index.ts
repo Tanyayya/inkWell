@@ -15,6 +15,19 @@ export interface Blog {
     }
     "savedBy":String[]
 }
+
+export interface RBlog {
+    "content":string,
+    "title":string,
+    "id":string,
+    "publishedDate":string,
+    "anonymous":boolean,
+    "author":{
+        "userId":string,
+        "realTimepostId":string,
+    }
+    
+}
 export interface Blogs {
     "content":string,
     "title":string,
@@ -108,6 +121,41 @@ export const useSavedBlogs =() =>{
         loading,
         blogs,
        
+
+    }
+}
+
+
+export const useRealTimeBlog =({id}:{id:string})=>{
+    const [rBlog,setRBlog]=useState<RBlog>();
+    const[loading,setLoading]=useState(true);
+    
+    useEffect(()=>{
+        axios.get(`${BACKEND_URL}/api/vi/realtimeblog/${id}`,{
+        headers:{
+            Authorization:localStorage.getItem("token")
+        }
+    })
+    .then(response => {
+        const responseData = response.data.response[0]; // Assuming you're always expecting one blog entry
+        const blogData: RBlog = {
+        content: responseData.content,
+        title: responseData.title,
+        id: responseData.id,
+        publishedDate:responseData.publishedDate,
+        anonymous:responseData.anonymous,
+        author:responseData.author
+       
+    };
+        setRBlog(blogData);
+        setLoading(false);
+    })
+}, [id])
+
+    return {
+        loading,
+        rBlog,
+    
 
     }
 }

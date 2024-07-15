@@ -92,4 +92,35 @@ realtimeblogRouter.put('/realtimepost/:id', async (c) => {
   });
 
 
+  realtimeblogRouter.get('/:id', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+    
+    
+    const id =  c.req.param("id");
+    const response=await prisma.realTimePost.findMany({
+        where:{
+            id:id
+        },
+        select:{
+         
+          content:true,
+          title:true,
+          id:true,
+          publishedDate:true,
+          anonymous:true,
+          authors:true,
+          
+        }
+    });
+
+    return c.json({
+      response
+    })
+  })
+
+
+
+
   

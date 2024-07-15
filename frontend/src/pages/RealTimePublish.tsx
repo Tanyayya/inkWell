@@ -5,16 +5,31 @@ import { PostEditor } from "../components/PostEditor";
 import { Appbar } from "../components/Appbar";
 import { BACKEND_URL } from "../config";
 import { useParams } from "react-router-dom";
+import { useRealTimeBlog } from "../hooks";
+import { Loader } from "../components/Loader";
 
 export const RealTimePublish = () => {
-  const [title, setTitle] = useState("");
-  const { id } = useParams(); 
+  const { id } = useParams<{ id: string }>();
+
+  const { loading, rBlog } = useRealTimeBlog({ id: id || "" });
  
-  const [description, setDescription] = useState("");
-  const [published, setPublished] = useState(true);
+  const [description, setDescription] = useState(rBlog?.content||"");
+  const [published, setPublished] = useState(false);
   const [anonymous, setAnonymous] = useState(false);
+  
+  const [title, setTitle] = useState(rBlog?.title||"");
+  
   const navigate = useNavigate();
   const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    if (rBlog) {
+      setDescription(rBlog.content);
+      setAnonymous(rBlog.anonymous);
+      setTitle(rBlog.title);
+     
+    }
+  }, [rBlog]);
 
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +38,7 @@ export const RealTimePublish = () => {
         wsRef.current.send(JSON.stringify({ id, type: "title", value: e.target.value }));
       }
     },
-    []
+    [id]
   );
 
   const handlePublishedChange = useCallback(() => {
@@ -49,7 +64,7 @@ export const RealTimePublish = () => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({ id, type: "content", value }));
     }
-  }, []);
+  }, [id]);
 
   const handleSave = useCallback(async () => {
     try {
@@ -109,6 +124,15 @@ export const RealTimePublish = () => {
       wsRef.current = null;
     };
   }, []);
+
+  if (loading) {
+    return (
+      <div>
+        <Appbar />
+        <Loader message="Loading Blog" />
+      </div>
+    );
+  }
 
   return (
     <div>

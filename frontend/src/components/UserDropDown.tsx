@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Avatar } from "./BlogCard";
-import { useState } from "react";
+import { useState,useRef,useEffect } from "react";
 
 
 interface DropdownProps {
@@ -11,16 +11,28 @@ interface DropdownProps {
 
 export const Dropdown=({ id, size, name }: DropdownProps) =>{
     const [dropdownVisible, setDropdownVisible] = useState(false);
-  
-    const toggleDropdown = () => {
-      setDropdownVisible(!dropdownVisible);
-    };
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const handleButtonClick = () => {
+        setDropdownVisible((prev) => !prev);
+      };
     
+      const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          setDropdownVisible(false);
+        }
+      };
+      useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, []);
   
     return (
       <div className="relative inline-block">
-        <Avatar id={id} size={size} name={name} onClick={toggleDropdown} />
-        <div
+        <Avatar id={id} size={size} name={name}  onClick={handleButtonClick} />
+        <div ref={dropdownRef}
           className={`absolute right-0 mt-2 z-10 ${
             dropdownVisible ? "block" : "hidden"
           } bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700`}

@@ -1,13 +1,10 @@
 
-import { Link } from 'react-router-dom';
 
 import dateFormat from 'dateformat';
-import { decode } from 'hono/jwt';
+
 import {  RBlog } from '../hooks';
 import { Avatar, Circle } from './BlogCard';
 
-import { UserContext } from '../pages/Blog';
-import { useContext } from 'react';
 
 export interface BlogID {
   title: string;
@@ -22,18 +19,16 @@ export interface User{
 }
 
 export const CompleteCollaborateBlog = ({ rblog }: { rblog: RBlog }) => {
-  const user = useContext(UserContext);
-  const token = localStorage.getItem('token');
-  const { payload } = decode(token || '');
-  const userId = payload.id as string;
-  ;
+  
+  
+  
   
   
  
 
   
   
-  const name = rblog.anonymous ? 'Anonymous' : rblog.author;
+  // const name = rblog.anonymous ? 'Anonymous' : rblog.author;
   const words = rblog.content.split(' ');
 
   // Function to handle following a user

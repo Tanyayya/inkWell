@@ -9,6 +9,7 @@ import { EditPost } from './pages/EditPost'
 import { Profile } from './pages/Profile'
 import { Drafts } from './pages/Drafts'
 import { RealTimePublish } from './pages/RealTimePublish'
+import { CollaborateBlog } from './pages/CollaborateBlog'
 
 
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/user/:id" element={<AuthorPage/>}></Route>
           <Route path='/drafts' element={<Drafts/>}></Route>
           <Route path="/collaborate/:id" element={<RealTimePublish/>}></Route>
+          <Route path="/collaboratedPost/:id" element={<CollaborateBlog />} />
         </Routes>
         
       </BrowserRouter>

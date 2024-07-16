@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState, useRef } from "react";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { PostEditor } from "../components/PostEditor";
 import { Appbar } from "../components/Appbar";
-import { BACKEND_URL } from "../config";
+
 import { useParams } from "react-router-dom";
 import { useRealTimeBlog } from "../hooks";
 import { Loader } from "../components/Loader";
@@ -66,22 +66,10 @@ export const RealTimePublish = () => {
     }
   }, [id]);
 
-  const handleSave = useCallback(async () => {
-    try {
-      const response = await axios.put(
-        `${BACKEND_URL}/api/v1/`,
-        { title, content: description, published, anonymous },
-        {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-          },
-        }
-      );
-      navigate(`/blog/${response.data.id}`);
-    } catch (error) {
-      console.error("Error saving the post:", error);
-    }
-  }, [title, description, published, anonymous, navigate]);
+  const handleSave =(async () => {
+    setPublished(true);
+    navigate(`/collaboratedPost/${id}`)
+  });
 
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:3000");

@@ -5,6 +5,7 @@ import { Loader } from "../components/Loader";
 import { Appbar } from "../components/Appbar";
 import { useUserInfo } from "../hooks/userInfo";
 import { createContext } from "react";
+import CommentList from "../components/CommentList";
 
 interface User {
     id: string;
@@ -17,6 +18,7 @@ interface User {
 export const Blog = () =>{
     const {id} =useParams();
     const {user}=useUserInfo();
+    
     const {loading,blog}=useBlog({
         id: id||""
     });
@@ -32,6 +34,7 @@ export const Blog = () =>{
         <UserContext.Provider value={user}>
          <Appbar></Appbar>
     <CompleteBlog  blog={blog}/>
+    <CommentList postId={blog.id} ></CommentList>
     </UserContext.Provider>
     </div>
 }

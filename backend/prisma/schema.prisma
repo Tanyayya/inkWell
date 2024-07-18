@@ -25,6 +25,7 @@ model User {
   followers String[]
   following String[]
   realTimePosts UserRealTimePosts[]
+  comments  Comment[]
 
 }
 
@@ -39,6 +40,7 @@ model Post {
   anonymous Boolean @default(false)
   likes String[]
   savedBy    Saved[]
+  comments Comment[]
  
 }
 
@@ -70,4 +72,19 @@ model UserRealTimePosts {
   realTimePost  RealTimePost @relation(fields: [realTimePostId], references: [id])
 
   @@id([userId, realTimePostId])
+}
+
+model Comment {
+  id        String        @id @default(uuid())
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  text      String
+  createdAt DateTime  @default(now())
+
+  // Self-referencing relationship: A comment can have many replies (nested comments)
+  parent    Comment?  @relation("CommentToReplies", fields: [parentId], references: [id])
+  parentId  String?
+  replies   Comment[] @relation("CommentToReplies")
 }

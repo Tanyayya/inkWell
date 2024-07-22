@@ -12,7 +12,7 @@ export const PostsDropdown = () => {
   const handleCollaborateClick = async () => {
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/api/vi/blog`,
+        `${BACKEND_URL}/api/vi/realtimeblog`,
         { title: "", content: "" },
         {
           headers: {

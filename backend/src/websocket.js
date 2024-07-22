@@ -43,12 +43,53 @@ var client_1 = require("@prisma/client");
 var extension_accelerate_1 = require("@prisma/extension-accelerate");
 var prisma = new client_1.PrismaClient().$extends((0, extension_accelerate_1.withAccelerate)());
 var app = new hono_1.Hono();
+// Debounce function
+function debounce(func, wait) {
+    var timeout;
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        if (timeout)
+            clearTimeout(timeout);
+        timeout = setTimeout(function () { return func.apply(void 0, args); }, wait);
+    };
+}
 // Assuming serve returns a ServerType
 var server = (0, node_server_1.serve)(app, function (info) {
     console.log("Listening on http://localhost:".concat(info.port));
 });
 // Create WebSocket server using the server instance
 var wss = new ws_1.WebSocketServer({ server: server });
+var changesLog = [];
+var logChange = debounce(function (id, type, value) { return __awaiter(void 0, void 0, void 0, function () {
+    var error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, prisma.changeLog.create({
+                        data: {
+                            postId: id,
+                            author: "author",
+                            line: 0,
+                            text: value,
+                            timestamp: new Date(),
+                        },
+                    })];
+            case 1:
+                _a.sent();
+                console.log("Change log entry created successfully");
+                return [3 /*break*/, 3];
+            case 2:
+                error_1 = _a.sent();
+                console.error('Failed to create change log entry', error_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); }, 10000); // 10 seconds debounce
 wss.on("connection", function connection(ws) {
     var _this = this;
     console.log("Client connected");
@@ -59,18 +100,18 @@ wss.on("connection", function connection(ws) {
         console.log("Client disconnected");
     });
     ws.on("message", function (data) { return __awaiter(_this, void 0, void 0, function () {
-        var message_1, id, type, value, updatedPost, error_1;
+        var message, id, type, value, updatedPost, broadcastMessage_1, broadcastPromises_1, error_2, error_3;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _b.trys.push([0, 2, , 3]);
-                    message_1 = JSON.parse(data.toString());
-                    console.log("Received message:", message_1);
-                    id = message_1.id, type = message_1.type, value = message_1.value;
+                    _b.trys.push([0, 6, , 7]);
+                    message = JSON.parse(data.toString());
+                    console.log("Received message:", message);
+                    id = message.id, type = message.type, value = message.value;
                     // Validate message fields
                     if (!id || !type || value === undefined) {
-                        console.error("Invalid message format:", message_1);
+                        console.error("Invalid message format:", message);
                         return [2 /*return*/];
                     }
                     console.log("Updating post with id:", id);
@@ -83,24 +124,48 @@ wss.on("connection", function connection(ws) {
                 case 1:
                     updatedPost = _b.sent();
                     console.log("Post updated successfully:", updatedPost);
-                    // Broadcast the updated data to all connected clients
+                    broadcastMessage_1 = JSON.stringify(message);
+                    broadcastPromises_1 = [];
                     wss.clients.forEach(function (client) {
-                        if (client !== ws && client.readyState === ws.OPEN) {
-                            console.log("Broadcasting to client: ".concat(client));
-                            client.send(JSON.stringify(message_1));
-                        }
-                        else {
-                            console.log("Client not ready or the same client: ".concat(client));
+                        if (client.readyState === client.OPEN && client !== ws) {
+                            broadcastPromises_1.push(new Promise(function (resolve, reject) {
+                                client.send(broadcastMessage_1, function (err) {
+                                    if (err) {
+                                        console.error('Failed to send message:', err);
+                                        reject(err);
+                                    }
+                                    else {
+                                        resolve();
+                                    }
+                                });
+                            }));
                         }
                     });
-                    return [3 /*break*/, 3];
+                    _b.label = 2;
                 case 2:
-                    error_1 = _b.sent();
-                    console.error('Failed to process message or update database', error_1);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    _b.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, Promise.all(broadcastPromises_1)];
+                case 3:
+                    _b.sent();
+                    console.log('Broadcast completed successfully');
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_2 = _b.sent();
+                    console.error('Error during broadcasting:', error_2);
+                    return [3 /*break*/, 5];
+                case 5:
+                    // Log the change with debounce
+                    logChange(id, type, value);
+                    return [3 /*break*/, 7];
+                case 6:
+                    error_3 = _b.sent();
+                    console.error('Failed to process message or update database', error_3);
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     }); });
-    // ws.send("Connection done");
+});
+app.get('/changes-log', function (c) {
+    return c.json(changesLog);
 });

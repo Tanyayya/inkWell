@@ -121,6 +121,21 @@ realtimeblogRouter.put('/realtimepost/:id', async (c) => {
   })
 
 
+  realtimeblogRouter.get('/:id/changes', async (c) => {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
+    const postId = c.req.param('id');
+  
+    const changes = await prisma.changeLog.findMany({
+      where: { postId },
+      orderBy: { timestamp: 'asc' },
+    });
+  
+    return c.json(changes);
+  });
+
+
 
 
   

@@ -1,33 +1,28 @@
 import { useCallback, useEffect, useState, useRef } from "react";
-
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { PostEditor } from "../components/PostEditor";
 import { Appbar } from "../components/Appbar";
-
-import { useParams } from "react-router-dom";
 import { useRealTimeBlog } from "../hooks";
 import { Loader } from "../components/Loader";
 
 export const RealTimePublish = () => {
   const { id } = useParams<{ id: string }>();
-
   const { loading, rBlog } = useRealTimeBlog({ id: id || "" });
- 
-  const [description, setDescription] = useState(rBlog?.content||"");
+
+  const [description, setDescription] = useState(rBlog?.content || "");
   const [published, setPublished] = useState(false);
   const [anonymous, setAnonymous] = useState(false);
-  
-  const [title, setTitle] = useState(rBlog?.title||"");
-  
+  const [title, setTitle] = useState(rBlog?.title || "");
+
   const navigate = useNavigate();
   const wsRef = useRef<WebSocket | null>(null);
+  
 
   useEffect(() => {
     if (rBlog) {
       setDescription(rBlog.content);
       setAnonymous(rBlog.anonymous);
       setTitle(rBlog.title);
-     
     }
   }, [rBlog]);
 
@@ -42,34 +37,37 @@ export const RealTimePublish = () => {
   );
 
   const handlePublishedChange = useCallback(() => {
-    setPublished((prev) => !prev);
+    const newPublished = !published;
+    setPublished(newPublished);
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(
-        JSON.stringify({ type: "published", value: !published })
-      );
+      wsRef.current.send(JSON.stringify({ type: "published", value: newPublished }));
     }
   }, [published]);
 
   const handleAnonymousChange = useCallback(() => {
-    setAnonymous((prev) => !prev);
+    const newAnonymous = !anonymous;
+    setAnonymous(newAnonymous);
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(
-        JSON.stringify({ type: "anonymous", value: !anonymous })
-      );
+      wsRef.current.send(JSON.stringify({ type: "anonymous", value: newAnonymous }));
     }
   }, [anonymous]);
 
-  const handleEditorChange = useCallback((value: string) => {
-    setDescription(value);
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ id, type: "content", value }));
-    }
-  }, [id]);
+  const handleEditorChange = useCallback(
+    (value: string) => {
+      setDescription(value);
 
-  const handleSave =(async () => {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        
+          wsRef.current?.send(JSON.stringify({ id, type: 'content', value }));
+      }
+    },
+    [id]
+  );
+
+  const handleSave = async () => {
     setPublished(true);
-    navigate(`/collaboratedPost/${id}`)
-  });
+    navigate(`/collaboratedPost/${id}`);
+  };
 
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:3000");
@@ -85,7 +83,7 @@ export const RealTimePublish = () => {
         case "title":
           setTitle(data.value);
           break;
-        case "description":
+        case "content":
           setDescription(data.value);
           break;
         case "published":

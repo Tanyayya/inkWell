@@ -61,7 +61,7 @@ model RealTimePost {
   anonymous     Boolean           @default(false)
   likes         String[]
   authors       UserRealTimePosts[]
-  
+  changelog     ChangeLog[]
 }
 
 model UserRealTimePosts {
@@ -87,4 +87,14 @@ model Comment {
   parent    Comment?  @relation("CommentToReplies", fields: [parentId], references: [id])
   parentId  String?
   replies   Comment[] @relation("CommentToReplies")
+}
+
+model ChangeLog {
+  id        String   @id @default(cuid())
+  postId    String
+  author    String
+  line       Int
+  text       String
+  timestamp DateTime @default(now())
+  post      RealTimePost @relation(fields: [postId], references: [id])
 }

@@ -12,3 +12,6 @@ Hono: Hono is utilized for handling authentication and authorization, ensuring r
 React: The frontend is built with React, providing a dynamic and responsive user interface.
 Prisma: Prisma serves as the data access layer, simplifying database interactions and enhancing developer productivity.
 PostgreSQL: PostgreSQL is the chosen database management system for storing and managing application data efficiently.
+
+The website is deployed on vercel and cloudfare.
+https://inkwell-git-feature-real-time-collaboration-tanyayyas-projects.vercel.app/signin
